@@ -14,7 +14,7 @@ export default defineConfig({
     strictPort: true,    // If true, Vite will throw an error if the port is already in use
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // Proxy API requests to your backend server
+        target: 'https://hr-management-1-baxp.onrender.com', // Proxy API requests to your backend server
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '') // Remove /api from the request URL
       }
