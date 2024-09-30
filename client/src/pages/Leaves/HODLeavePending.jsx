@@ -14,6 +14,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useTheme } from "@mui/material";
 import * as XLSX from "xlsx";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
+import { useAuth } from "../../contexts/AuthContext";
 import useFetchAllLeaveRequest from "../../hooks/LeaveRequestHook/useFetchAllLeaveRequest";
 import useApprovedLeaveRequest from "../../hooks/LeaveRequestHook/useApprovedLeaveRequest";
 import { tokens } from "../../theme";
@@ -22,6 +23,7 @@ import Header from "../../components/Header";
 const HODLeavePending = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { userData } = useAuth();
   const { leaveRequests, refetchLeaveRequests } = useFetchAllLeaveRequest();
   const { approveLeaveRequest, loading: updateLoading } = useApprovedLeaveRequest();
   
@@ -30,6 +32,9 @@ const HODLeavePending = () => {
   const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false);
   const [isRejectionDialogOpen, setRejectionDialogOpen] = useState(false);
 
+  const downloadLeaveRequestPDF = (id) => {
+    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+  };
   
   // Filter the leave requests to show only pending ones
   const pendingLeaveRequests = leaveRequests.filter(
@@ -42,6 +47,10 @@ const HODLeavePending = () => {
         requestId: selectedRequest._id,
         status: "approved",
         role: "HOD", // Adjust role as needed
+        hodFirstName: userData.firstName, // Using HOD data from userData
+        hodMiddleName: userData.middleName,
+        hodLastName: userData.lastName,
+        hodSignature: userData.signature,
       });
       setApprovalDialogOpen(false);
       refetchLeaveRequests();
@@ -52,9 +61,13 @@ const HODLeavePending = () => {
     if (selectedRequest) {
       await approveLeaveRequest({
         requestId: selectedRequest._id,
-        status: "rejected",
+        status: "disapproved",
         role: "HOD", // Adjust role as needed
         rejectReason,
+        hodFirstName: userData.firstName, // Using HOD data from userData
+        hodMiddleName: userData.middleName,
+        hodLastName: userData.lastName,
+        hodSignature: userData.signature, 
       });
       setRejectionDialogOpen(false);
       refetchLeaveRequests();
@@ -96,10 +109,9 @@ const HODLeavePending = () => {
         <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
       ),
     },
-    { field: "reason", headerName: "Reason", width: 200 },
     {
-      field: "adminApproval",
-      headerName: "Authorized Officer",
+      field: "hodApproval",
+      headerName: "Department Head",
       width: 200,
       renderCell: (params) => {
         // Determine the color based on the value
@@ -112,8 +124,8 @@ const HODLeavePending = () => {
       },
     },
     {
-      field: "hodApproval",
-      headerName: "Department Head",
+      field: "adminApproval",
+      headerName: "Authorized Officer",
       width: 200,
       renderCell: (params) => {
         // Determine the color based on the value
@@ -152,9 +164,17 @@ const HODLeavePending = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 170,
+      width: 275,
       renderCell: (params) => (
         <Box>
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+            onClick={() => downloadLeaveRequestPDF(params.row._id)}
+          >
+            View
+          </Button>
           <Button
             variant="contained"
             color="primary"
@@ -176,7 +196,7 @@ const HODLeavePending = () => {
               setRejectionDialogOpen(true);
             }}
           >
-            Reject
+            Disapprove
           </Button>
         </Box>
       ),
@@ -286,7 +306,7 @@ const HODLeavePending = () => {
             disabled={updateLoading}
             onClick={handleApprove}
           >
-            {updateLoading ? "Approving..." : "Approved"}
+            {updateLoading ? "Approving..." : "Approve"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -298,14 +318,14 @@ const HODLeavePending = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Confirm Rejection</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirm Disapproval</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to reject this Leave Request?
+            Are you sure you want to disapproved this Leave Request?
           </DialogContentText>
           <TextField
             margin="dense"
-            label="Rejection Reason"
+            label="Disapproval Reason"
             name="rejectReason"
             fullWidth
             variant="outlined"
@@ -322,9 +342,9 @@ const HODLeavePending = () => {
           <Button
             onClick={handleReject}
             color="error"
-            disabled={updateLoading}
+            disabled={updateLoading || !rejectReason}
           >
-            {updateLoading ? "Rejecting..." : "Reject"}
+            {updateLoading ? "Disapproving..." : "Disapprove"}
           </Button>
         </DialogActions>
       </Dialog>

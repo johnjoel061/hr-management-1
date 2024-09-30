@@ -332,8 +332,8 @@ const AdminSidebar = () => {
             />
 
             <Item
-              title="Leave Rejected"
-              to="/leave-rejected"
+              title="Leave Disapproved"
+              to="/leave-disapproved"
               icon={<DangerousOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

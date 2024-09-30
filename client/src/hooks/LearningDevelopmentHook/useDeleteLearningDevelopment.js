@@ -29,7 +29,7 @@ const useDeleteLearningDevelopment = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Delete learning development error:', error);
+      message.error(error.response.data.message || 'Error deleting learning development');
     } finally {
       setLoading(false);
     }

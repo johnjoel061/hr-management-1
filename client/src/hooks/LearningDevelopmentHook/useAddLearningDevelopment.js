@@ -29,7 +29,7 @@ const useAddLearningDevelopment = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Add learning development error:', error);
+      message.error(error.response.data.message || 'Error adding learning development');
     } finally {
       setLoading(false);
     }

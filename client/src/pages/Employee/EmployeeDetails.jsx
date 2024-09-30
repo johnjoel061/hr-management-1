@@ -5,7 +5,7 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import * as XLSX from "xlsx";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import useFetchLeaveType from "../../hooks/LeaveTypeHook/useFetchLeaveType";
 
 import useFetchLearningDevelopment from "../../hooks/LearningDevelopmentHook/useFetchLearningDevelopment";
@@ -32,6 +32,11 @@ import useFetchLeaveCredit from "../../hooks/LeaveCreditHook/useFetchLeaveCredit
 import useDeleteLeaveCredit from "../../hooks/LeaveCreditHook/useDeleteLeaveCredit";
 import useUpdateLeaveCredit from "../../hooks/LeaveCreditHook/useUpdateLeaveCredit";
 import useAddLeaveCredit from "../../hooks/LeaveCreditHook/useAddLeaveCredit";
+
+import useAddAward from "../../hooks/AwardHook/useAddAward";
+import useDeleteAward from "../../hooks/AwardHook/useDeleteAward";
+import useUpdateAward from "../../hooks/AwardHook/useUpdateAward";
+import useFetchAward from "../../hooks/AwardHook/useFetchAward";
 
 import {
   Card,
@@ -249,7 +254,6 @@ const EmployeeDetails = () => {
   const [newLRData, setNewLRData] = useState({
     period: "",
     particular: "",
-    typeOfLeave: "",
     earned: "",
     absentUnderWithPay: "",
     balance: "",
@@ -277,7 +281,6 @@ const EmployeeDetails = () => {
     setNewLRData({
       period: "",
       particular: "",
-      typeOfLeave: "",
       earned: "",
       absentUnderWithPay: "",
       balance: "",
@@ -311,7 +314,6 @@ const EmployeeDetails = () => {
     if (
       newLRData.period &&
       newLRData.particular &&
-      newLRData.typeOfLeave &&
       newLRData.earned &&
       newLRData.absentUnderWithPay &&
       newLRData.balance &&
@@ -450,7 +452,7 @@ const EmployeeDetails = () => {
       newSRData.station &&
       newSRData.branch &&
       newSRData.wPay &&
-      newSRData.separationDate &&
+      //newSRData.separationDate &&
       newSRData.separationCause
     ) {
       await addServiceRecord(id, newSRData);
@@ -673,10 +675,7 @@ const EmployeeDetails = () => {
   };
 
   const handleConfirmAddLC = async () => {
-    if (
-      newLCData.leaveType &&
-      newLCData.credit
-    ) {
+    if (newLCData.leaveType && newLCData.credit) {
       await addLeaveCredit(id, newLCData);
       handleAddLcDialogClose();
       refetchLeaveCredit();
@@ -702,6 +701,116 @@ const EmployeeDetails = () => {
     /*==============================LEAVE CREDITS END===============================*/
   }
 
+  {
+    /*==============================AWARDS START===============================*/
+  }
+  const {
+    award,
+    loading: awLoading,
+    error: awError,
+    refetchAward,
+  } = useFetchAward(id);
+
+  const { addAward, loading: addAwLoading, error: addAwError } = useAddAward();
+
+  const {
+    updateAward,
+    loading: updateAwLoading,
+    error: updateAwError,
+  } = useUpdateAward();
+
+  const {
+    deleteAward,
+    loading: deleteAwLoading,
+    error: deleteAwError,
+  } = useDeleteAward();
+
+  const [editAwDialogOpen, setEditAwDialogOpen] = useState(false);
+  const [addAwDialogOpen, setAddAwDialogOpen] = useState(false);
+  const [deleteAwDialogOpen, setDeleteAwDialogOpen] = useState(false);
+  const [currentAW, setCurrentAW] = useState(null);
+  const [newAWData, setNewAWData] = useState({
+    nameOfAward: "",
+    levelOfAward: "",
+    dateOfAward: "",
+    issuedBy: "",
+  });
+
+  const handleAddAwInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewAWData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleEditAwInputChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentAW((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleAddAwDialogOpen = () => {
+    setAddAwDialogOpen(true);
+  };
+
+  const handleAddAwDialogClose = () => {
+    setAddAwDialogOpen(false);
+    setNewAWData({
+      nameOfAward: "",
+      levelOfAward: "",
+      dateOfAward: "",
+      issuedBy: "",
+    });
+  };
+
+  const handleEditAwDialogOpen = (aw) => {
+    setCurrentAW(aw);
+    setEditAwDialogOpen(true);
+  };
+
+  const handleEditAwDialogClose = () => {
+    setEditAwDialogOpen(false);
+    setCurrentAW(null);
+  };
+
+  const handleDeleteAwDialogOpen = (aw) => {
+    setCurrentAW(aw);
+    setDeleteAwDialogOpen(true);
+  };
+
+  const handleDeleteAwDialogClose = () => {
+    setDeleteAwDialogOpen(false);
+    setCurrentAW(null);
+  };
+
+  const handleConfirmAddAW = async () => {
+    if (
+      newAWData.nameOfAward &&
+      newAWData.levelOfAward &&
+      newAWData.dateOfAward &&
+      newAWData.issuedBy
+    ) {
+      await addAward(id, newAWData);
+      handleAddAwDialogClose();
+      refetchAward();
+    } else {
+      // Show an error message or handle the empty fields
+      message.error("Please fill all required fields.");
+    }
+  };
+
+  const handleConfirmEditAW = async () => {
+    await updateAward(id, currentAW._id, currentAW);
+    handleEditAwDialogClose();
+    refetchAward();
+  };
+
+  const handleConfirmDeleteAW = async () => {
+    await deleteAward(id, currentAW._id);
+    handleDeleteAwDialogClose();
+    refetchAward();
+  };
+
+  {
+    /*==============================AWARDS END===============================*/
+  }
 
   {
     /*==============================LEARNING AND DEVELOPMENT COLUMNS===============================*/
@@ -741,7 +850,9 @@ const EmployeeDetails = () => {
       headerName: "Date & Time Created",
       width: 185,
       renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}</span>
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
       ),
     },
 
@@ -778,8 +889,7 @@ const EmployeeDetails = () => {
   }
   const leaveRecordColumns = [
     { field: "period", headerName: "PERIOD", width: 150 },
-    { field: "particular", headerName: "PARTICULARS", width: 200 },
-    { field: "typeOfLeave", headerName: "TYPE OF LEAVE", width: 200 },
+    { field: "particular", headerName: "PARTICULARS", width: 500 },
     { field: "earned", headerName: "EARNED", width: 150 },
     {
       field: "absentUnderWithPay",
@@ -808,12 +918,13 @@ const EmployeeDetails = () => {
     {
       field: "createdAt",
       headerName: "Date & Time Created",
-      width: 185,
+      width: 210,
       renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}</span>
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
       ),
     },
-
     {
       field: "actions",
       headerName: "Actions",
@@ -886,9 +997,18 @@ const EmployeeDetails = () => {
       field: "separationDate",
       headerName: "SEPARATION DATE",
       width: 200,
-      renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
-      ),
+      renderCell: (params) => {
+        const dateValue = params.value ? new Date(params.value) : null;
+
+        // Check if date is valid
+        return (
+          <span>
+            {dateValue && !isNaN(dateValue.getTime())
+              ? format(dateValue, "MMMM d, yyyy")
+              : "N/A"}
+          </span>
+        );
+      },
     },
     {
       field: "separationCause",
@@ -900,7 +1020,9 @@ const EmployeeDetails = () => {
       headerName: "Date & Time Created",
       width: 180,
       renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}</span>
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
       ),
     },
 
@@ -948,7 +1070,9 @@ const EmployeeDetails = () => {
       headerName: "Date & Time Created",
       width: 180,
       renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}</span>
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
       ),
     },
     {
@@ -981,6 +1105,7 @@ const EmployeeDetails = () => {
   {
     /*=================================PERFORMANCE RATING COLUMNS================================*/
   }
+
   {
     /*==============================LEAVE CREDITS COLUMNS===============================*/
   }
@@ -992,7 +1117,9 @@ const EmployeeDetails = () => {
       headerName: "Date & Time Created",
       width: 180,
       renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}</span>
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
       ),
     },
 
@@ -1026,11 +1153,63 @@ const EmployeeDetails = () => {
   {
     /*==============================LEAVE RECORD COLUMNS===============================*/
   }
-  console.log("Learning Development State:", learningDevelopment);
-  console.log("Leave Record State:", leaveRecord);
-  console.log("Service Record State:", serviceRecord);
-  console.log("Performance Rating State:", performanceRating);
-  console.log("Leave Credit State:", leaveCredit);
+
+  {
+    /*==============================AWARDS COLUMNS===============================*/
+  }
+  const awardColumns = [
+    { field: "nameOfAward", headerName: "NAME OF AWARD", width: 250 },
+    { field: "levelOfAward", headerName: "LEVEL OF AWARD", width: 180 },
+    {
+      field: "dateOfAward",
+      headerName: "DATE OF AWARD",
+      width: 180,
+      renderCell: (params) => (
+        <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
+      ),
+    },
+    { field: "issuedBy", headerName: "ISSUED BY", width: 250 },
+    {
+      field: "createdAt",
+      headerName: "Date & Time Created",
+      width: 180,
+      renderCell: (params) => (
+        <span>
+          {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
+        </span>
+      ),
+    },
+
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            style={{ marginRight: 8 }}
+            onClick={() => handleEditAwDialogOpen(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={() => handleDeleteAwDialogOpen(params.row)}
+          >
+            Delete
+          </Button>
+        </Box>
+      ),
+    },
+  ];
+  {
+    /*==============================AWARDS COLUMNS===============================*/
+  }
 
   //EXPORT DATA EXCEL
   const handleExportToExcelLearningDevelopment = () => {
@@ -1048,7 +1227,10 @@ const EmployeeDetails = () => {
     const worksheet = XLSX.utils.json_to_sheet(leaveRecord);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "LR Data Sheets");
-    XLSX.writeFile(workbook, `${firstName}_${lastName}_LeaveRecord_data_sheets.xlsx`);
+    XLSX.writeFile(
+      workbook,
+      `${firstName}_${lastName}_LeaveRecord_data_sheets.xlsx`
+    );
   };
   //EXPORT DATA EXCEL
   const handleExportToExcelServiceRecord = () => {
@@ -1057,17 +1239,33 @@ const EmployeeDetails = () => {
     const worksheet = XLSX.utils.json_to_sheet(serviceRecord);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "SR Data Sheets");
-    XLSX.writeFile(workbook, `${firstName}_${lastName}_ServiceRecord_data_sheets.xlsx`);
+    XLSX.writeFile(
+      workbook,
+      `${firstName}_${lastName}_ServiceRecord_data_sheets.xlsx`
+    );
   };
-//EXPORT DATA EXCEL
-const handleExportToExcelPerformanceRating = () => {
-  const lastName = userData.lastName;
-  const firstName = userData.firstName;
-  const worksheet = XLSX.utils.json_to_sheet(performanceRating);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "PR Data Sheets");
-  XLSX.writeFile(workbook, `${firstName}_${lastName}_PerformanceRating_data_sheets.xlsx`);
-};
+  //EXPORT DATA EXCEL
+  const handleExportToExcelPerformanceRating = () => {
+    const lastName = userData.lastName;
+    const firstName = userData.firstName;
+    const worksheet = XLSX.utils.json_to_sheet(performanceRating);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "PR Data Sheets");
+    XLSX.writeFile(
+      workbook,
+      `${firstName}_${lastName}_PerformanceRating_data_sheets.xlsx`
+    );
+  };
+
+  //EXPORT DATA EXCEL
+  const handleExportToExcelAward = () => {
+    const lastName = userData.lastName;
+    const firstName = userData.firstName;
+    const worksheet = XLSX.utils.json_to_sheet(award);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "AW Data Sheets");
+    XLSX.writeFile(workbook, `${firstName}_${lastName}_award_data_sheets.xlsx`);
+  };
 
   if (userLoading) {
     return <CircularProgress />;
@@ -1190,11 +1388,13 @@ const handleExportToExcelPerformanceRating = () => {
                       src={userData.signature}
                       variant="square"
                       sx={{
-                        width: 200,      
-                        height: 100,     
+                        width: 200,
+                        height: 100,
                         margin: "auto",
                         objectFit: "cover",
-                        background: "#bfbfbf"
+                        background: "#bfbfbf",
+                        marginTop: "5px",
+                        borderRadius: "6px",
                       }}
                     />
                   </Grid>
@@ -1205,12 +1405,10 @@ const handleExportToExcelPerformanceRating = () => {
                     <BoldText>EMPLOYMENT DETAILS</BoldText>
                   </Typography>
                   <Typography variant="body2">
-                    <BoldText>Employee ID:</BoldText>{" "}
-                    {userData.employeeId}
+                    <BoldText>Employee ID:</BoldText> {userData.employeeId}
                   </Typography>
                   <Typography variant="body2">
-                    <BoldText>Hired Date:</BoldText>{" "}
-                    {userData.hiredDate}
+                    <BoldText>Hired Date:</BoldText> {userData.hiredDate}
                   </Typography>
                   <Typography variant="body2">
                     <BoldText>First Day of Service:</BoldText>{" "}
@@ -1228,16 +1426,16 @@ const handleExportToExcelPerformanceRating = () => {
                     {userData.positionTitle}
                   </Typography>
                   <Typography variant="body2">
-                    <BoldText>Position Level:</BoldText>{" "}
-                    {userData.positionLevel}
-                  </Typography>
-                  <Typography variant="body2">
                     <BoldText>Employment Status:</BoldText>{" "}
                     {userData.employmentStatus}
                   </Typography>
                   <Typography variant="body2">
-                    <BoldText>Status of Current Employment:</BoldText>{" "}
-                    {userData.statusOfCurrentEmployment}
+                    <BoldText>Current Employment:</BoldText>{" "}
+                    {userData.currentEmployment}
+                  </Typography>
+                  <Typography variant="body2">
+                    <BoldText>Years of Service:</BoldText>{" "}
+                    {userData.yearsOfService}
                   </Typography>
                   <Typography variant="body2">
                     <BoldText>Role:</BoldText> {userData.role}
@@ -1281,8 +1479,7 @@ const handleExportToExcelPerformanceRating = () => {
                     <BoldText>Salary Grade:</BoldText> {userData.salaryGrade}
                   </Typography>
                   <Typography variant="body2">
-                    <BoldText>Salary:</BoldText>{" "}
-                    {userData.salary}
+                    <BoldText>Salary:</BoldText> {userData.salary}
                   </Typography>
                   <Typography variant="body2">
                     <BoldText>Step Increment:</BoldText>{" "}
@@ -1317,7 +1514,7 @@ const handleExportToExcelPerformanceRating = () => {
                       LEARNING & DEVELOPMENT (LD) INTERVENTIONS/TRAINING
                       PROGRAMS ATTENDED
                     </BoldText>
-                    <Box sx={{display: "flex", gap: "10px"}}>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
                       <Button
                         variant="contained"
                         color="error"
@@ -1390,7 +1587,7 @@ const handleExportToExcelPerformanceRating = () => {
                         </Typography>
                       ) : (
                         <DataGrid
-                          rows={learningDevelopment || []} // Ensure rows is always an array
+                          rows={learningDevelopment || []} 
                           columns={columns}
                           components={{ Toolbar: GridToolbar }}
                           getRowId={(row) => row._id}
@@ -1407,7 +1604,7 @@ const handleExportToExcelPerformanceRating = () => {
                 <Grid item xs={12} md={6}>
                   <Typography variant="h4" sx={{ marginBottom: 2 }}>
                     <BoldText>LEAVE RECORD</BoldText>
-                    <Box sx={{display: "flex", gap: "10px"}}>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
                       <Button
                         variant="contained"
                         color="error"
@@ -1438,7 +1635,7 @@ const handleExportToExcelPerformanceRating = () => {
                         </Box>
                       </Button>
                     </Box>
-                    
+
                     {/*BOX AND GRID LATER */}
                     <Box
                       m="10px 0 0 0"
@@ -1498,7 +1695,7 @@ const handleExportToExcelPerformanceRating = () => {
                 <Grid item xs={12} md={6}>
                   <Typography variant="h4" sx={{ marginBottom: 2 }}>
                     <BoldText>SERVICE RECORD</BoldText>
-                    <Box sx={{display: "flex", gap: "10px"}}>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
                       <Button
                         variant="contained"
                         color="error"
@@ -1588,7 +1785,7 @@ const handleExportToExcelPerformanceRating = () => {
                 <Grid item xs={12} md={6}>
                   <Typography variant="h4" sx={{ marginBottom: 2 }}>
                     <BoldText>PERFORMANCE RATING</BoldText>
-                    <Box sx={{display: "flex", gap: "10px"}}>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
                       <Button
                         variant="contained"
                         color="error"
@@ -1653,7 +1850,7 @@ const handleExportToExcelPerformanceRating = () => {
                         },
                       }}
                     >
-                      {srLoading ? (
+                      {prLoading ? (
                         <CircularProgress />
                       ) : prError ? (
                         <Typography variant="h6" color="error">
@@ -1664,6 +1861,96 @@ const handleExportToExcelPerformanceRating = () => {
                         <DataGrid
                           rows={performanceRating || []} // Ensure rows is always an array
                           columns={performanceRatingColumns}
+                          components={{ Toolbar: GridToolbar }}
+                          getRowId={(row) => row._id}
+                        />
+                      )}
+                    </Box>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Card>
+
+            <Card variant="outlined" sx={{ marginTop: 3, padding: 2 }}>
+              <Grid container>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                    <BoldText>AWARDS</BoldText>
+                    <Box sx={{ display: "flex", gap: "10px" }}>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleAddAwDialogOpen}
+                        style={{ margin: "20px 0 0 0" }}
+                      >
+                        <Box display="flex" alignItems="center">
+                          <AddCircleOutlineOutlinedIcon />
+                          <Box ml={1}>Add New Award</Box>
+                        </Box>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleExportToExcelAward}
+                        style={{ margin: "20px 0 0 0" }}
+                        sx={{
+                          backgroundColor: "#388E3C",
+                          color: "##e0e0e0",
+                          margin: "0 20px",
+                          "&:hover": {
+                            backgroundColor: "#45A049",
+                          },
+                        }}
+                      >
+                        <Box display="flex" alignItems="center">
+                          <FileDownloadOutlinedIcon />
+                        </Box>
+                      </Button>
+                    </Box>
+                    {/*BOX AND GRID LATER */}
+                    <Box
+                      m="10px 0 0 0"
+                      height="70vh"
+                      width="63vw"
+                      sx={{
+                        "& .MuiDataGrid-root": {
+                          border: "none",
+                        },
+                        "& .MuiDataGrid-cell": {
+                          borderBottom: "none",
+                        },
+                        "& .name-column--cell": {
+                          color: colors.greenAccent[300],
+                        },
+                        "& .MuiDataGrid-columnHeaders": {
+                          backgroundColor: colors.blueAccent[700],
+                          borderBottom: "none",
+                        },
+                        "& .MuiDataGrid-virtualScroller": {
+                          backgroundColor: colors.primary[400],
+                        },
+                        "& .MuiDataGrid-footerContainer": {
+                          borderTop: "none",
+                          backgroundColor: colors.blueAccent[700],
+                        },
+                        "& .MuiCheckbox-root": {
+                          color: `${colors.greenAccent[200]} !important`,
+                        },
+                        "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                          color: `${colors.grey[100]} !important`,
+                        },
+                      }}
+                    >
+                      {awLoading ? (
+                        <CircularProgress />
+                      ) : awError ? (
+                        <Typography variant="h6" color="error">
+                          Failed to load AWARD data: {lcError.message}
+                        </Typography>
+                      ) : (
+                        <DataGrid
+                          rows={award || []} // Ensure rows is always an array
+                          columns={awardColumns}
                           components={{ Toolbar: GridToolbar }}
                           getRowId={(row) => row._id}
                         />
@@ -1730,8 +2017,7 @@ const handleExportToExcelPerformanceRating = () => {
                         <CircularProgress />
                       ) : lcError ? (
                         <Typography variant="h6" color="error">
-                          Failed to load leave credits data:{" "}
-                          {lcError.message}
+                          Failed to load leave credits data: {lcError.message}
                         </Typography>
                       ) : (
                         <DataGrid
@@ -1746,7 +2032,6 @@ const handleExportToExcelPerformanceRating = () => {
                 </Grid>
               </Grid>
             </Card>
-
           </StyledCard>
 
           {/*===============DIALOG FOR LEARNING DEVELOPMENT START=================*/}
@@ -2087,27 +2372,17 @@ const handleExportToExcelPerformanceRating = () => {
                     fullWidth
                     variant="outlined"
                   />
-                  <TextField
-                    margin="dense"
-                    label="Particulars"
-                    name="particular"
-                    type="text"
-                    value={currentLR.particular}
-                    onChange={handleEditLrInputChange}
-                    fullWidth
-                    variant="outlined"
-                  />
 
                   <FormControl margin="dense" fullWidth variant="outlined">
                     <InputLabel id="type-of-leave-label">
-                      Type of Leave
+                      Particulars
                     </InputLabel>
                     <Select
                       labelId="type-of-leave-label"
                       id="type-of-leave"
-                      label="Type of Leave"
-                      name="typeOfLeave"
-                      value={currentLR.typeOfLeave}
+                      label="Particulars"
+                      name="particular"
+                      value={currentLR.particular}
                       onChange={handleEditLrInputChange}
                     >
                       {!leaveTypeLoading &&
@@ -2233,25 +2508,15 @@ const handleExportToExcelPerformanceRating = () => {
                 fullWidth
                 variant="outlined"
               />
-              <TextField
-                margin="dense"
-                label="Particulars"
-                name="particular"
-                type="text"
-                value={newLRData.particular}
-                onChange={handleAddLrInputChange}
-                fullWidth
-                variant="outlined"
-              />
 
               <FormControl margin="dense" fullWidth variant="outlined">
-                <InputLabel id="type-of-leave-label">Type of Leave</InputLabel>
+                <InputLabel id="type-of-leave-label">Particulars</InputLabel>
                 <Select
                   labelId="type-of-leave-label"
                   id="type-of-leave"
-                  label="Type of Leave"
-                  name="typeOfLeave"
-                  value={newLRData.typeOfLeave}
+                  label="Particulars"
+                  name="particular"
+                  value={newLRData.particular}
                   onChange={handleAddLrInputChange}
                 >
                   {!leaveTypeLoading &&
@@ -2665,7 +2930,7 @@ const handleExportToExcelPerformanceRating = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                required
+                // required
                 sx={{
                   "& .Mui-focused": {
                     color: "#b4b4b4",
@@ -3069,6 +3334,214 @@ const handleExportToExcelPerformanceRating = () => {
             </DialogActions>
           </Dialog>
           {/*===============DIALOG FOR LEAVE CREDITS END========================*/}
+
+          {/*===============AWARDS START========================*/}
+          <Dialog
+            open={deleteAwDialogOpen}
+            onClose={handleDeleteAwDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete this Award?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handleDeleteAwDialogClose}
+                color="primary"
+                disabled={deleteAwLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmDeleteAW}
+                color="error"
+                disabled={deleteAwLoading}
+              >
+                {deleteAwLoading ? "Deleting..." : "Delete"}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={editAwDialogOpen}
+            onClose={handleEditAwDialogClose}
+            aria-labelledby="form-dialog-title"
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              style: {
+                minHeight: "55vh",
+                maxHeight: "55vh",
+                minWidth: "80vh",
+                maxWidth: "80vh",
+              },
+            }}
+          >
+            <DialogTitle>Edit Award</DialogTitle>
+            <DialogContent>
+              {currentAW ? (
+                <>
+                  <TextField
+                    margin="dense"
+                    label="Name of Award"
+                    name="nameOfAward"
+                    type="text"
+                    value={currentAW.nameOfAward}
+                    onChange={handleEditAwInputChange}
+                    fullWidth
+                    variant="outlined"
+                  />
+                  <TextField
+                    select
+                    margin="dense"
+                    label="Level of Award"
+                    name="levelOfAward"
+                    type="text"
+                    value={currentAW.levelOfAward}
+                    onChange={handleEditAwInputChange}
+                    fullWidth
+                    variant="outlined"
+                    SelectProps={{ native: true }}
+                  >
+                    <option value="International">International</option>
+                    <option value="National">National</option>
+                    <option value="Regional">Regional</option>
+                    <option value="Provincial">Provincial</option>
+                    <option value="Municipal">Municipal</option>
+                  </TextField>
+                  <TextField
+                    margin="dense"
+                    label="Date of Award"
+                    name="dateOfAward"
+                    type="date"
+                    value={currentAW.dateOfAward}
+                    onChange={handleEditAwInputChange}
+                    fullWidth
+                    variant="outlined"
+                  />
+                  <TextField
+                    margin="dense"
+                    label="ISSUED BY"
+                    name="issuedBy"
+                    type="text"
+                    value={currentAW.issuedBy}
+                    onChange={handleEditAwInputChange}
+                    fullWidth
+                    variant="outlined"
+                  />
+                </>
+              ) : (
+                <Typography variant="body1" color="error">
+                  No award selected.
+                </Typography>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handleEditAwDialogClose}
+                color="primary"
+                disabled={updateAwLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmEditAW}
+                color="error"
+                disabled={updateAwLoading}
+              >
+                {updateAwLoading ? "Updating..." : "Update"}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog
+            open={addAwDialogOpen}
+            onClose={handleAddAwDialogClose}
+            aria-labelledby="form-dialog-title"
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              style: {
+                minHeight: "40vh",
+                maxHeight: "40vh",
+                minWidth: "80vh",
+                maxWidth: "80vh",
+              },
+            }}
+          >
+            <DialogTitle>Add New Award</DialogTitle>
+            <DialogContent>
+              <TextField
+                margin="dense"
+                label="Name of Award"
+                name="nameOfAward"
+                type="text"
+                value={newAWData.nameOfAward}
+                onChange={handleAddAwInputChange}
+                fullWidth
+                variant="outlined"
+              />
+              <TextField
+                select
+                margin="dense"
+                label="Level of Award"
+                name="levelOfAward"
+                type="text"
+                value={newAWData.levelOfAward}
+                onChange={handleAddAwInputChange}
+                fullWidth
+                variant="outlined"
+                SelectProps={{ native: true }}
+              >
+                <option value="International">International</option>
+                <option value="National">National</option>
+                <option value="Regional">Regional</option>
+                <option value="Provincial">Provincial</option>
+                <option value="Municipal">Municipal</option>
+              </TextField>
+              <TextField
+                margin="dense"
+                label="Date of Award"
+                name="dateOfAward"
+                type="date"
+                value={newAWData.dateOfAward}
+                onChange={handleAddAwInputChange}
+                fullWidth
+                variant="outlined"
+              />
+              <TextField
+                margin="dense"
+                label="ISSUED BY"
+                name="issuedBy"
+                type="text"
+                value={newAWData.issuedBy}
+                onChange={handleAddAwInputChange}
+                fullWidth
+                variant="outlined"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handleAddAwDialogClose}
+                color="primary"
+                disabled={addAwLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmAddAW}
+                color="error"
+                disabled={addAwLoading}
+              >
+                {addAwLoading ? "Adding..." : "Add"}
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {/*===============AWARDS END========================*/}
         </Box>
       </Box>
     </Wrapper>

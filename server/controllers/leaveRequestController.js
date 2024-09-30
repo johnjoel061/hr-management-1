@@ -37,6 +37,25 @@ exports.addLeaveRequest = async (req, res, next) => {
 
       startDate,
       endDate,
+
+      hodFirstName,
+      hodMiddleName,
+      hodLastName,
+      hodSignature,
+
+      //VACATION CREDITS
+      vacationLeaveTE,
+      vacationLeaveLA,
+      vacationLeaveBalance,
+      //SICK CREDITS
+      sickLeaveTE,
+      sickLeaveLA,
+      sickLeaveBalance,
+      //M-ADMIN
+      daysWithPay,
+      daysWithoutPay,
+      others,
+
     } = req.body;
 
     // Check if the user already has a pending leave request
@@ -81,6 +100,24 @@ exports.addLeaveRequest = async (req, res, next) => {
 
       status: "pending",
       dateOfFiling: new Date(),
+
+      hodFirstName,
+      hodMiddleName,
+      hodLastName,
+      hodSignature,
+
+      //VACATION CREDITS
+      vacationLeaveTE,
+      vacationLeaveLA,
+      vacationLeaveBalance,
+      //SICK CREDITS
+      sickLeaveTE,
+      sickLeaveLA,
+      sickLeaveBalance,
+      //M-ADMIN
+      daysWithPay,
+      daysWithoutPay,
+      others,
     });
 
     // Save the leave request to the database
@@ -160,12 +197,34 @@ exports.getAllLeaveRequests = async (req, res, next) => {
 
 exports.approveLeaveRequest = async (req, res, next) => {
   try {
-    const { status, role, rejectReason } = req.body;
+    const { 
+      status, 
+      role, 
+      rejectReason, 
+      hodFirstName, 
+      hodMiddleName, 
+      hodLastName, 
+      hodSignature,
+
+      //VACATION CREDITS
+      vacationLeaveTE,
+      vacationLeaveLA,
+      vacationLeaveBalance,
+      //SICK CREDITS
+      sickLeaveTE,
+      sickLeaveLA,
+      sickLeaveBalance,
+      //M-ADMIN
+      daysWithPay,
+      daysWithoutPay,
+      others,
+    } = req.body;
+
     const { id: _id } = req.params;
     const leaveTypes = await LeaveType.find({}); 
 
     // Validate the status value
-    const validStatuses = ["approved", "rejected"];
+    const validStatuses = ["approved", "disapproved"];
     if (!validStatuses.includes(status)) {
       return next(createError(400, "Invalid status value"));
     }
@@ -178,18 +237,61 @@ exports.approveLeaveRequest = async (req, res, next) => {
 
     // Prepare update data based on role and status
     let updateData = {};
-    if (status === "rejected") {
+    if (status === "disapproved") {
       updateData = {
-        status: "rejected",
-        ...(role === "ADMIN" && { adminApproval: "rejected", rejectReason }),
-        ...(role === "HOD" && { hodApproval: "rejected", rejectReason }),
-        ...(role === "M-ADMIN" && { mAdminApproval: "rejected", rejectReason }),
+        status: "disapproved",
+        ...(role === "HOD" && { 
+          hodApproval: "disapproved", 
+          rejectReason,
+          hodFirstName,
+          hodMiddleName,
+          hodLastName,
+          hodSignature, 
+        }),
+        ...(role === "ADMIN" && { 
+          adminApproval: "disapproved", 
+          rejectReason, 
+          //VACATION CREDITS
+          vacationLeaveTE,
+          vacationLeaveLA,
+          vacationLeaveBalance,
+          //SICK CREDITS
+          sickLeaveTE,
+          sickLeaveLA,
+          sickLeaveBalance,
+        }),
+        ...(role === "M-ADMIN" && { 
+          mAdminApproval: "disapproved", 
+          rejectReason,
+        }),
       };
     } else if (status === "approved") {
       updateData = {
-        ...(role === "ADMIN" && { adminApproval: "approved" }),
-        ...(role === "HOD" && { hodApproval: "approved" }),
-        ...(role === "M-ADMIN" && { mAdminApproval: "approved" }),
+        ...(role === "HOD" && { 
+          hodApproval: "approved", 
+          hodFirstName,
+          hodMiddleName,
+          hodLastName,
+          hodSignature,
+        }),
+        ...(role === "ADMIN" && { 
+          adminApproval: "approved",
+          //VACATION CREDITS
+          vacationLeaveTE,
+          vacationLeaveLA,
+          vacationLeaveBalance,
+          //SICK CREDITS
+          sickLeaveTE,
+          sickLeaveLA,
+          sickLeaveBalance,
+        }),
+        ...(role === "M-ADMIN" && { 
+          mAdminApproval: "approved",
+          //M-ADMIN
+          daysWithPay,
+          daysWithoutPay,
+          others, 
+        }),
       };
     }
 
@@ -205,14 +307,14 @@ exports.approveLeaveRequest = async (req, res, next) => {
 
     // Finalize the status based on all approvals
     if (
-      leaveRequest.adminApproval === "rejected" ||
-      leaveRequest.hodApproval === "rejected" ||
-      leaveRequest.mAdminApproval === "rejected"
+      leaveRequest.hodApproval === "disapproved" ||
+      leaveRequest.adminApproval === "disapproved" ||
+      leaveRequest.mAdminApproval === "disapproved"
     ) {
-      leaveRequest.status = "rejected";
+      leaveRequest.status = "disapproved";
     } else if (
-      leaveRequest.adminApproval === "approved" &&
       leaveRequest.hodApproval === "approved" &&
+      leaveRequest.adminApproval === "approved" &&
       leaveRequest.mAdminApproval === "approved"
     ) {
       leaveRequest.status = "approved";
@@ -229,8 +331,10 @@ exports.approveLeaveRequest = async (req, res, next) => {
       },
     });
 
-    // First email: Send when adminApproval is approved
-    if (role === "ADMIN" && status === "approved") {
+    // First email: Send when STATUS approved
+    if (leaveRequest.adminApproval === "approved" &&
+      leaveRequest.hodApproval === "approved" &&
+      leaveRequest.mAdminApproval === "approved") {
       // PDF generation for attachment
       const doc = new PDFDocument({
         size: "A4", // Size as in the original form
@@ -240,27 +344,29 @@ exports.approveLeaveRequest = async (req, res, next) => {
       let buffers = [];
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', async () => {
-        const pdfData = Buffer.concat(buffers);
+      const pdfData = Buffer.concat(buffers);
 
         // Email 1: With the PDF attachment confirming eligibility
       const firstMailOptions = {
         from: process.env.LGU_GMAIL,
         to: leaveRequest.gmail,
-        subject: "Leave Application Confirmation",
+        subject: "Leave Request Approved",
         text: `Dear ${leaveRequest.firstName} ${leaveRequest.lastName},\n\n` +
-              `Your leave request has been confirmed by the Authorized Officer.\n` +
+              `We are pleased to inform you that your leave request has been fully approved\n` +
+              `by the Department Head, Authorized Officer, and Municipal Administrator.\n` +
               `Attached here is a document confirming your eligibility to apply for a leave.\n\n` +
-              `Please download, print, and submit the form to HR for processing.\n\n` +
+              `Please download, print, and submit the form to HR for processing.\n` +
+              `Ensure you follow the LGU's leave policies during this period.\n\n` +
               `Best regards,\n` +
               `The HR Team\n` +
               `Local Government Unit`,
-        attachments: [
-          {
-            filename: `${leaveRequest.lastName}_LeaveForm.pdf`,
-            content: pdfData,
-            contentType: 'application/pdf',
-          },
-        ],
+          attachments: [
+            {
+              filename: `${leaveRequest.lastName}_LeaveForm.pdf`,
+              content: pdfData,
+              contentType: 'application/pdf',
+            },
+          ],
       };
 
       // Email with PDF attachment
@@ -425,7 +531,6 @@ exports.approveLeaveRequest = async (req, res, next) => {
 
     // Signature handling
     const signatureUrl = leaveRequest.signature; // This is a URL
-
     if (signatureUrl) {
       const parsedUrl = url.parse(signatureUrl);
       const signatureFilename = path.basename(parsedUrl.pathname); // Extract filename from URL
@@ -460,12 +565,20 @@ exports.approveLeaveRequest = async (req, res, next) => {
   doc.font('Helvetica').fontSize(7.7).text(`As of`, 100, 565);
   doc.font('Helvetica').fontSize(9).text(`____________________________`, 120, 565);
 
+  doc.font('Helvetica').fontSize(7.7).text(`As of`, 100, 565);
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`${new Date(leaveRequest.asOfDate).toLocaleDateString('en-US')}`, 170, 564);
+  doc.font('Helvetica').fontSize(9).text(`____________________________`, 120, 565);
   doc.font('Helvetica-Bold').fontSize(7.8).text(`Vacation Leave`, 158, 584);
   doc.font('Helvetica-Bold').fontSize(7.8).text(`Sick Leave`, 250, 584);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Total Earned`, 75, 600);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveTE ?? ' '}`, 175, 600);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveTE ?? ' '}`, 260, 600);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Less this Application`, 63, 614);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveLA ?? ' '}`, 175, 614);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveLA ?? ' '}`, 260, 614);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Balance`, 85, 630);
-
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveBalance ?? ' '}`, 175, 630);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveBalance ?? ' '}`, 260, 630);
 
   //TABLE
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 587);
@@ -474,17 +587,66 @@ exports.approveLeaveRequest = async (req, res, next) => {
   doc.rect(60, 580, 84, 60).stroke();
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 617);
   doc.rect(227, 580, 83, 60).stroke();
-  doc.font('Helvetica-Bold').fontSize(8.5).text(`JOSELITO M. MALANSALAY, II, MPA`, 108, 659);
+
+  const adminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  // Check if the admin has approved the leave request
+  if (leaveRequest.adminApproval === 'approved' || leaveRequest.adminApproval === 'disapproved') { 
+    if (fs.existsSync(adminSignaturePath)) {
+      doc.image(adminSignaturePath, 125, 625, { width: 120, height: 50 });
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Admin signature not available', 120, 640);
+      console.error('Admin signature file not found:', adminSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 180, 650);
+    console.error('Admin has not approved the leave request.');
+  }
+
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`JOSELITO A. MANSALAY, II, MPA`, 118, 659);
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 100, 660);
-  doc.font('Helvetica').fontSize(7.5).text(`(Authorized Officer)`, 152, 670);
+  doc.font('Helvetica').fontSize(7.5).text(`(MGADH-I (HRMO IV))`, 152, 670);
+  
   //Department Head
   doc.rect(324, 536, 223, 150).stroke();
   doc.font('Helvetica').fontSize(9).text('7.B RECOMMENDATION', 330, 543);
-  doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
-  doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to_____________________________', 330, 572);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 585);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 598);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 611);
+
+  // Conditionally checking the approval or disapproval box
+  if (leaveRequest.hodApproval === 'approved') {
+    doc.font('Helvetica').fontSize(7.7).text('[/] For approval', 330, 560);  // Box checked for approval
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to', 330, 572);
+  } else if (leaveRequest.hodApproval === 'disapproved'){
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
+    doc.font('Helvetica').fontSize(7.7).text('[/] For disapproval due to ' + (leaveRequest.rejectReason || ""), 330, 572);  // Box checked for disapproval with reason
+  } else {
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to', 330, 572); 
+  }
+  doc.font('Helvetica').fontSize(9).text('_________________________', 417, 571);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 580);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 589);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 598);
+
+  //SIGNATURE
+  const hodSignatureUrl = leaveRequest.hodSignature;
+  const hodSignatureFileName = hodSignatureUrl ? hodSignatureUrl.split('/').pop() : '';
+  const hodSignaturePath = path.join(__dirname, '../uploads/signatures/', hodSignatureFileName);
+  // Check if signature URL and names are provided
+  if (hodSignatureUrl && leaveRequest.hodFirstName && leaveRequest.hodLastName && leaveRequest.hodMiddleName) {
+    if (fs.existsSync(hodSignaturePath)) {
+      doc.image(hodSignaturePath, 385, 620, { width: 120, height: 50 });
+      doc.font('Helvetica-Bold').fontSize(8.5).text(
+        `${leaveRequest.hodFirstName.toUpperCase()} ${leaveRequest.hodMiddleName.charAt(0).toUpperCase()}. ${leaveRequest.hodLastName.toUpperCase()}`, 
+        405, 
+        659
+      );
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Signature not available', 380, 650);
+      console.error('Signature file not found:', hodSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 433, 650);
+    console.error('Signature or name not available');
+  }
 
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 355, 660);
   doc.font('Helvetica').fontSize(7.5).text(`(Department Head)`, 405, 670);
@@ -493,46 +655,75 @@ exports.approveLeaveRequest = async (req, res, next) => {
   doc.rect(47, 686, 500, 100).stroke();
   doc.font('Helvetica').fontSize(9).text('7.C APPROVED FOR:', 50, 692);
   doc.font('Helvetica').fontSize(9).text('7.D DISAPPROVED DUE TO:', 330, 692);
+  doc.font('Helvetica').fontSize(7.7).text(`${leaveRequest.rejectReason ?? ' '}`, 350, 705);
   doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 704);
-  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 715);
-  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 726);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 713);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 722);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 731);
 
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.daysWithPay ?? ' '}`, 80, 704);
   doc.font('Helvetica').fontSize(7.7).text('________days with pay', 70, 705);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.daysWithoutPay ?? ' '}`, 80, 715);
   doc.font('Helvetica').fontSize(7.7).text('________days without pay', 70, 716);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.others ?? ' '}`, 80, 726);
   doc.font('Helvetica').fontSize(7.7).text('________others (Specify)', 70, 727);
 
-  doc.font('Helvetica-Bold').fontSize(8.5).text(`FERNEE J. LIM`, 275, 758);
+  //--------------------------M-ADMIN-------------------------------------
+  const mAdminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  // Check if the admin has approved the leave request
+  if (leaveRequest.mAdminApproval === 'approved' || leaveRequest.mAdminApproval === 'disapproved') { 
+    if (fs.existsSync(mAdminSignaturePath)) {
+      doc.image(mAdminSignaturePath, 250, 720, { width: 120, height: 50 });
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Municipal Administrator signature not available', 120, 640);
+      console.error('Municipal Administrator signature file not found:', mAdminSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 300, 750);
+    console.error('Municipal Administrator has not approved the leave request.');
+  }
+
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`FHERNEE J. LIM`, 275, 758);
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 220, 760);
   doc.font('Helvetica').fontSize(7.5).text(`(Municipal Administrator)`, 263, 770);
   doc.end();
-  };
+};
 //==================================Generate PDF ===================================//
 
   // Second email: Send if all three approvals are given
-  if (
-    leaveRequest.adminApproval === "approved" &&
-    leaveRequest.hodApproval === "approved" &&
-    leaveRequest.mAdminApproval === "approved"
-  ) {
-    const secondMailOptions = {
-      from: process.env.LGU_GMAIL,
-      to: leaveRequest.gmail,
-      subject: "Leave Request Fully Approved",
-      text: `Dear ${leaveRequest.firstName} ${leaveRequest.lastName},\n\n` +
-            `We are pleased to inform you that your leave request has been fully approved\n` +
-            `by the Authorized Officer, Department Head, and Municipal Administrator.\n\n` +
-            `Please ensure you follow the LGU's leave policies during this period.\n\n` +
-            `Best regards,\n` +
-            `The HR Team\n` +
-            `Local Government Unit`,
-    };
+  // if (
+  //   leaveRequest.adminApproval === "approved" &&
+  //   leaveRequest.hodApproval === "approved" &&
+  //   leaveRequest.mAdminApproval === "approved"
+  // ) {
+  //   const secondMailOptions = {
+  //     from: process.env.LGU_GMAIL,
+  //     to: leaveRequest.gmail,
+  //     subject: "Leave Request Fully Approved",
+  //     text: `Dear ${leaveRequest.firstName} ${leaveRequest.lastName},\n\n` +
+  //           `We are pleased to inform you that your leave request has been fully approved\n` +
+  //           `by the Department Head, Authorized Officer, and Municipal Administrator.\n` +
+  //           `Attached here is a document confirming your eligibility to apply for a leave.\n\n` +
+  //           `Please download, print, and submit the form to HR for processing.\n` +
+  //           `Ensure you follow the LGU's leave policies during this period.\n\n` +
+  //           `Best regards,\n` +
+  //           `The HR Team\n` +
+  //           `Local Government Unit`,
+  //     attachments: [
+  //       {
+  //         filename: `${leaveRequest.lastName}_LeaveForm.pdf`,
+  //         content: pdfData,
+  //         contentType: 'application/pdf',
+  //       },
+  //     ],
+  //   };
 
-    // Send third email confirming full approval
-    await transporter.sendMail(secondMailOptions);
-  }
+  //   // Send third email confirming full approval
+  //   await transporter.sendMail(secondMailOptions);
+  // }
 
-  // Send rejection email if status is "rejected"
-  if (status === "rejected") {
+  // Send rejection email if status is "disapproved"
+  if (status === "disapproved") {
     const rejectionMailOptions = {
       from: process.env.LGU_GMAIL,
       to: leaveRequest.gmail,
@@ -572,8 +763,11 @@ exports.approveLeaveRequest = async (req, res, next) => {
 exports.generateLeaveRequestPDF = async (req, res) => {
   try {
     const { id } = req.params;
+    
     // Fetch leave request data from the database
+    //const leaveRequest = await LeaveRequest.findById(id);
     const leaveRequest = await LeaveRequest.findById(id);
+    //const user = await User.findById();
 
     const leaveTypes = await LeaveType.find({}); 
 
@@ -752,11 +946,8 @@ exports.generateLeaveRequestPDF = async (req, res) => {
       doc.font('Helvetica').fontSize(7.7).text(`${isChecked} ${commutations[type]}`);
     });
 
-    // Modify the signature path to use only the filename, not the full URL
-    // Signature
     // Signature handling
-    const signatureUrl = leaveRequest.signature; // This is a URL
-
+    const signatureUrl = leaveRequest.signature; // This is a URL    
     if (signatureUrl) {
       const parsedUrl = url.parse(signatureUrl);
       const signatureFilename = path.basename(parsedUrl.pathname); // Extract filename from URL
@@ -788,15 +979,21 @@ exports.generateLeaveRequestPDF = async (req, res) => {
   
   doc.rect(47, 536, 277, 150).stroke();
   doc.font('Helvetica').fontSize(9).text('7.A CERTIFICATION OF LEAVE CREDITS', 50, 543);
-  doc.font('Helvetica').fontSize(7.7).text(`As of`, 100, 565);
-  doc.font('Helvetica').fontSize(9).text(`____________________________`, 120, 565);
 
+  doc.font('Helvetica').fontSize(7.7).text(`As of`, 100, 565);
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`${new Date(leaveRequest.asOfDate).toLocaleDateString('en-US')}`, 170, 564);
+  doc.font('Helvetica').fontSize(9).text(`____________________________`, 120, 565);
   doc.font('Helvetica-Bold').fontSize(7.8).text(`Vacation Leave`, 158, 584);
   doc.font('Helvetica-Bold').fontSize(7.8).text(`Sick Leave`, 250, 584);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Total Earned`, 75, 600);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveTE ?? ' '}`, 175, 600);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveTE ?? ' '}`, 260, 600);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Less this Application`, 63, 614);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveLA ?? ' '}`, 175, 614);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveLA ?? ' '}`, 260, 614);
   doc.font('Helvetica-BoldOblique').fontSize(7.8).text(`Balance`, 85, 630);
-
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.vacationLeaveBalance ?? ' '}`, 175, 630);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.sickLeaveBalance ?? ' '}`, 260, 630);
 
   //TABLE
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 587);
@@ -805,17 +1002,66 @@ exports.generateLeaveRequestPDF = async (req, res) => {
   doc.rect(60, 580, 84, 60).stroke();
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 617);
   doc.rect(227, 580, 83, 60).stroke();
-  doc.font('Helvetica-Bold').fontSize(8.5).text(`JOSELITO M. MALANSALAY, II, MPA`, 108, 659);
+  
+  const adminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  // Check if the admin has approved the leave request
+  if (leaveRequest.adminApproval === 'approved' || leaveRequest.adminApproval === 'disapproved') { 
+    if (fs.existsSync(adminSignaturePath)) {
+      doc.image(adminSignaturePath, 125, 625, { width: 120, height: 50 });
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Admin signature not available', 120, 640);
+      console.error('Admin signature file not found:', adminSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 180, 650);
+    console.error('Admin has not approved the leave request.');
+  }
+
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`JOSELITO A. MANSALAY, II, MPA`, 118, 659);
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 100, 660);
-  doc.font('Helvetica').fontSize(7.5).text(`(Authorized Officer)`, 152, 670);
+  doc.font('Helvetica').fontSize(7.5).text(`(MGADH-I (HRMO IV))`, 152, 670);
+
   //Department Head
-  doc.rect(324, 536, 223, 150).stroke();
+  doc.rect(324, 536, 223, 150).stroke(); 
   doc.font('Helvetica').fontSize(9).text('7.B RECOMMENDATION', 330, 543);
-  doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
-  doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to_____________________________', 330, 572);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 585);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 598);
-  doc.font('Helvetica').fontSize(9).text('________________________________________', 340, 611);
+
+  // Conditionally checking the approval or disapproval box
+  if (leaveRequest.hodApproval === 'approved') {
+    doc.font('Helvetica').fontSize(7.7).text('[/] For approval', 330, 560);  // Box checked for approval
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to', 330, 572);
+  } else if (leaveRequest.hodApproval === 'disapproved'){
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
+    doc.font('Helvetica').fontSize(7.7).text('[/] For disapproval due to ' + (leaveRequest.rejectReason || ""), 330, 572);  // Box checked for disapproval with reason
+  } else {
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For approval', 330, 560);
+    doc.font('Helvetica').fontSize(7.7).text('[ ] For disapproval due to', 330, 572); 
+  }
+  doc.font('Helvetica').fontSize(9).text('_________________________', 417, 571);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 580);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 589);
+  doc.font('Helvetica').fontSize(9).text('__________________________________________', 330, 598);
+
+  //SIGNATURE
+  const hodSignatureUrl = leaveRequest.hodSignature;
+  const hodSignatureFileName = hodSignatureUrl ? hodSignatureUrl.split('/').pop() : '';
+  const hodSignaturePath = path.join(__dirname, '../uploads/signatures/', hodSignatureFileName);
+  // Check if signature URL and names are provided
+  if (hodSignatureUrl && leaveRequest.hodFirstName && leaveRequest.hodLastName && leaveRequest.hodMiddleName) {
+    if (fs.existsSync(hodSignaturePath)) {
+      doc.image(hodSignaturePath, 385, 620, { width: 120, height: 50 });
+      doc.font('Helvetica-Bold').fontSize(8.5).text(
+        `${leaveRequest.hodFirstName.toUpperCase()} ${leaveRequest.hodMiddleName.charAt(0).toUpperCase()}. ${leaveRequest.hodLastName.toUpperCase()}`, 
+        405, 
+        659
+      );
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Signature not available', 380, 650);
+      console.error('Signature file not found:', hodSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 433, 650);
+    console.error('Signature or name not available');
+  }
 
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 355, 660);
   doc.font('Helvetica').fontSize(7.5).text(`(Department Head)`, 405, 670);
@@ -824,15 +1070,35 @@ exports.generateLeaveRequestPDF = async (req, res) => {
   doc.rect(47, 686, 500, 100).stroke();
   doc.font('Helvetica').fontSize(9).text('7.C APPROVED FOR:', 50, 692);
   doc.font('Helvetica').fontSize(9).text('7.D DISAPPROVED DUE TO:', 330, 692);
+  doc.font('Helvetica').fontSize(7.7).text(`${leaveRequest.rejectReason ?? ' '}`, 350, 705);
   doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 704);
-  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 715);
-  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 726);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 713);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 722);
+  doc.font('Helvetica').fontSize(9).text(`_____________________________________`, 350, 731);
 
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.daysWithPay ?? ' '}`, 80, 704);
   doc.font('Helvetica').fontSize(7.7).text('________days with pay', 70, 705);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.daysWithoutPay ?? ' '}`, 80, 715);
   doc.font('Helvetica').fontSize(7.7).text('________days without pay', 70, 716);
+  doc.font('Helvetica-Bold').fontSize(8).text(`${leaveRequest.others ?? ' '}`, 80, 726);
   doc.font('Helvetica').fontSize(7.7).text('________others (Specify)', 70, 727);
 
-  doc.font('Helvetica-Bold').fontSize(8.5).text(`FERNEE J. LIM`, 275, 758);
+  //--------------------------M-ADMIN-------------------------------------
+  const mAdminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  // Check if the admin has approved the leave request
+  if (leaveRequest.mAdminApproval === 'approved' || leaveRequest.mAdminApproval === 'disapproved') { 
+    if (fs.existsSync(mAdminSignaturePath)) {
+      doc.image(mAdminSignaturePath, 250, 720, { width: 120, height: 50 });
+    } else {
+      doc.font('Helvetica').fontSize(9).text('Municipal Administrator signature not available', 120, 640);
+      console.error('Municipal Administrator signature file not found:', mAdminSignaturePath);
+    }
+  } else {
+    doc.font('Helvetica-Bold').fontSize(9).text(' ', 300, 750);
+    console.error('Municipal Administrator has not approved the leave request.');
+  }
+
+  doc.font('Helvetica-Bold').fontSize(8.5).text(`FHERNEE J. LIM`, 275, 758);
   doc.font('Helvetica').fontSize(9).text(`_________________________________`, 220, 760);
   doc.font('Helvetica').fontSize(7.5).text(`(Municipal Administrator)`, 263, 770);
   doc.end();

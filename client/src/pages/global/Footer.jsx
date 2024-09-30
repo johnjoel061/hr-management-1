@@ -153,14 +153,11 @@ const Footer = () => {
                 >
                   DEVELOPED BY
                 </Typography>
-                <a
-                  href="https://www.facebook.com/johnjoel.alfabete?mibextid=ZbWKwL"
+                <p
                   style={{ textDecoration: "none", color: "inherit" }}
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
                   John Joel C. Alfabete
-                </a>
+                </p>
               </Box>
             </Grid>
           </Grid>

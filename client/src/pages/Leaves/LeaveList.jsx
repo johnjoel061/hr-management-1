@@ -50,31 +50,6 @@ const LeaveList = () => {
       ),
     },
     {
-      field: "adminApproval",
-      headerName: "Authorized Officer",
-      width: 200,
-      renderCell: (params) => {
-        let color;
-        switch (params.value) {
-          case "pending":
-            color = "#CDB008"; // Yellow for pending
-            break;
-          case "approved":
-            color = "#388E3C"; // Green for approved
-            break;
-          case "rejected":
-            color = "#f44235"; // Red for rejected
-            break;
-          default:
-            color = "#000000"; // Default color (black)
-        }
-
-        return (
-          <span style={{ fontWeight: "bold", color }}>{params.value}</span>
-        );
-      },
-    },
-    {
       field: "hodApproval",
       headerName: "Department Head",
       width: 200,
@@ -87,7 +62,32 @@ const LeaveList = () => {
           case "approved":
             color = "#388e3c"; // Green for approved
             break;
-          case "rejected":
+          case "disapproved":
+            color = "#f44235"; // Red for rejected
+            break;
+          default:
+            color = "#000000"; // Default color (black)
+        }
+
+        return (
+          <span style={{ fontWeight: "bold", color }}>{params.value}</span>
+        );
+      },
+    },
+    {
+      field: "adminApproval",
+      headerName: "Authorized Officer",
+      width: 200,
+      renderCell: (params) => {
+        let color;
+        switch (params.value) {
+          case "pending":
+            color = "#CDB008"; // Yellow for pending
+            break;
+          case "approved":
+            color = "#388E3C"; // Green for approved
+            break;
+          case "disapproved":
             color = "#f44235"; // Red for rejected
             break;
           default:
@@ -112,7 +112,7 @@ const LeaveList = () => {
           case "approved":
             color = "#388e3c"; // Green for approved
             break;
-          case "rejected":
+          case "disapproved":
             color = "#f44235"; // Red for rejected
             break;
           default:
@@ -137,7 +137,7 @@ const LeaveList = () => {
           case "approved":
             color = "#388E3C"; // Green for approved
             break;
-          case "rejected":
+          case "disapproved":
             color = "#f44235"; // Red for rejected
             break;
           default:

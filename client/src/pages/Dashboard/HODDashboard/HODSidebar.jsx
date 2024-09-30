@@ -249,8 +249,8 @@ const HODSidebar = () => {
             />
 
             <Item
-              title="Leave Rejected"
-              to="/hod-leave-rejected"
+              title="Leave Disapproved"
+              to="/hod-leave-disapproved"
               icon={<DangerousOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

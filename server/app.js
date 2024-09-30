@@ -46,7 +46,7 @@ const leaveRequestRouter = require('./routes/leaveRequestRoute');
 const leaveCreditRouter = require('./routes/leaveCreditRoute');
 
 const requestFormRouter = require('./routes/requestFormRoute');
-
+const awardRouter = require('./routes/awardRoute');
 
 
 //===== ENVIRONMENT VARIABLES ====//
@@ -106,6 +106,7 @@ app.use("/api/employee/learning-development", learningDevelopmentRouter);
 app.use("/api/employee/leave-record", leaveRecordRouter);
 app.use("/api/employee/service-record", serviceRecordRouter);
 app.use("/api/employee/performance-rating", performanceRatingRouter);
+app.use("/api/employee/awards", awardRouter);
 app.use("/api/employee/leave-credit", leaveCreditRouter);
 
 app.use("/api/faqs", faqRouter); 
@@ -114,9 +115,7 @@ app.use("/api/calendar", calendarRouter);
 app.use("/api/organizational-structure", orgStructureRouter); 
 app.use("/api/settings", settingsRouter); 
 app.use("/api/employee", leaveRequestRouter); 
-
 app.use("/api/request-form", requestFormRouter); 
-
 
 
 //===== STATIC FILES SETUP ====//

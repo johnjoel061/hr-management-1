@@ -33,7 +33,7 @@ const useUpdateLearningDevelopment = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Update learning development error:', error);
+      message.error(error.response.data.message || 'Error updating learning development');
     } finally {
       setLoading(false);
     }

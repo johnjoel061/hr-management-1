@@ -29,7 +29,7 @@ const useDeleteLeaveCredit = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Delete Leave Credit error:', error);
+      message.error(error.response.data.message || 'Error deleting Leave Credit');
     } finally {
       setLoading(false);
     }

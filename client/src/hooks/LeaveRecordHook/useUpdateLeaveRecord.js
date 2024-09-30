@@ -33,7 +33,7 @@ const useUpdateLeaveRecord = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Update Leave Record error:', error);
+      message.error(error.response.data.message || 'Error updating Leave Record');
     } finally {
       setLoading(false);
     }

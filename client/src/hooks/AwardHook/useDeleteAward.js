@@ -2,26 +2,26 @@ import { useState } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 
-const useAddPerformanceRating = () => {
+const useDeleteAward = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const addPerformanceRating = async (userId, prData) => {
+  const deleteAward = async (userId, awId) => {
     setLoading(true);
     try {
-      const response = await axios.post(`http://localhost:3000/api/employee/performance-rating/${userId}/add`, prData, {
+      const response = await axios.delete(`http://localhost:3000/api/employee/awards/${userId}/${awId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      if (response.status === 201) {
-        message.success('Performance Rating entry added successfully');
+      if (response.status === 200) {
+        message.success('Award entry deleted successfully');
         setLoading(false);
         setError(null);
         return response.data.data;
       } else {
-        setError('Failed to add Performance Rating entry');
+        setError('Failed to delete Award entry');
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -29,13 +29,13 @@ const useAddPerformanceRating = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error(error.response.data.message || 'Error adding Performance Rating');
+      message.error('Delete Award error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  return { addPerformanceRating, loading, error };
+  return { deleteAward, loading, error };
 };
 
-export default useAddPerformanceRating;
+export default useDeleteAward;

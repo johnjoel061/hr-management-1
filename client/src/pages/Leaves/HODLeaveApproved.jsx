@@ -23,6 +23,10 @@ const HODLeaveApproved = () => {
     (request) => request.status === "approved"
   );
 
+  const downloadLeaveRequestPDF = (id) => {
+    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+  };
+
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     { field: "lastName", headerName: "Last Name", width: 200 },
@@ -68,6 +72,23 @@ const HODLeaveApproved = () => {
         </span>
       ),
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 90,
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+            onClick={() => downloadLeaveRequestPDF(params.row._id)}
+          >
+            View
+          </Button>
+        </Box>
+      ),
+    },
   ];
 
   //EXPORT DATA EXCEL
@@ -77,7 +98,7 @@ const HODLeaveApproved = () => {
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      "pending leave Data Sheets"
+      "approved leave Data Sheets"
     );
     XLSX.writeFile(workbook, "approvedLeaveRequests_data_sheets.xlsx");
   };

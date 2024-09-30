@@ -4,6 +4,7 @@ const LeaveRecordSchema = require("./leaveRecordModel"); // Import the schema
 const ServiceRecordSchema = require("./serviceRecordModel"); // Import the schema
 const PerformanceRatingSchema = require("./performanceRatingModel"); // Import the schema
 const LeaveCreditSchema = require("./leaveCreditModel");
+const AwardSchema = require("./awardModel");
 
 const userSchema = new mongoose.Schema(
   {
@@ -35,16 +36,25 @@ const userSchema = new mongoose.Schema(
     salaryGrade: { type: String },
     salary: {type: String},
     stepIncrement: { type: String },
-    hiredDate: { type: String },
-    employmentStatus: {
+    hiredDate: { type: String, required: true },
+    yearsOfService: { type: String },
+
+    currentEmployment: {
+      type: String,
+      enum: [
+        "Permanent", 
+        "Temporary",
+        "Casual", 
+        "Co-Terminus",
+      ],
+      default: "Permanent",
+    },
+    dateOfLastPromotion: { type: String, },
+    employmentStatus: { 
       type: String,
       enum: ["ACTIVE", "INACTIVE"],
       default: "ACTIVE",
     },
-
-    dateOfLastPromotion: { type: String, },
-    positionLevel: { type: String },
-    statusOfCurrentEmployment: { type: String },
     dateOfBirth: { type: String },
     tin: { type: String },
     gsis: { type: String },
@@ -71,11 +81,12 @@ const userSchema = new mongoose.Schema(
     },
     
     educationalBackground: { type: String },
-    employeeEligibilities: [{ type: String }], // Array of strings to store multiple checkbox values
+    employeeEligibilities: [{ type: String }], 
     learningDevelopment: [LearningDevelopmentSchema],
     leaveRecord: [LeaveRecordSchema],
     serviceRecord: [ServiceRecordSchema],
     performanceRating: [PerformanceRatingSchema],
+    award: [AwardSchema],
     leaveCredit: [LeaveCreditSchema],
 
     verificationCode: { type: String, default: '' },
@@ -84,6 +95,7 @@ const userSchema = new mongoose.Schema(
   
   { versionKey: false, timestamps: true }
 );
+
 
 const User = mongoose.model("User", userSchema);
 

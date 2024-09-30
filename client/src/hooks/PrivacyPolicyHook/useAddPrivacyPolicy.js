@@ -32,7 +32,7 @@ const useAddPrivacyPolicy = () => {
       } else {
         setError('An error occurred. Please try again.'); // Generic error message for other errors
       }
-      message.error('Add Privacy Policy error:', error);
+      message.error(error.response.data.message || 'Error adding Privacy Policy error');
     } finally {
       setLoading(false);
     }

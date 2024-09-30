@@ -233,8 +233,8 @@ const MadSidebar = () => {
             />
 
             <Item
-              title="Leave Rejected"
-              to="/m-admin-leave-rejected"
+              title="Leave Disapproved"
+              to="/m-admin-leave-disapproved"
               icon={<DangerousOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

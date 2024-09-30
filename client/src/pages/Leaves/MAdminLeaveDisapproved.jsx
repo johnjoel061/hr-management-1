@@ -9,16 +9,20 @@ import useFetchAllLeaveRequest from "../../hooks/LeaveRequestHook/useFetchAllLea
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 
-const MAdminLeaveRejected = () => {
+const MAdminLeaveDisapproved = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { leaveRequests } =
   useFetchAllLeaveRequest();
 
    // Filter the leave requests to show only rejected ones
-   const rejectedLeaveRequests = leaveRequests.filter(
-    (request) => request.status === "rejected"
+   const disapprovedLeaveRequests = leaveRequests.filter(
+    (request) => request.status === "disapproved"
   );
+
+  const downloadLeaveRequestPDF = (id) => {
+    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+  };
 
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
@@ -65,26 +69,43 @@ const MAdminLeaveRejected = () => {
         </span>
       ),
     },
-    { field: "rejectReason", headerName: "Reason/s why rejected", width: 200 },
+    { field: "rejectReason", headerName: "Reason/s why disapproved", width: 200 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 90,
+      renderCell: (params) => (
+        <Box>
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+            onClick={() => downloadLeaveRequestPDF(params.row._id)}
+          >
+            View
+          </Button>
+        </Box>
+      ),
+    },
   ];
 
   //EXPORT DATA EXCEL
   const handleExportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(rejectedLeaveRequests);
+    const worksheet = XLSX.utils.json_to_sheet(disapprovedLeaveRequests);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
       "pending leave Data Sheets"
     );
-    XLSX.writeFile(workbook, "rejectedLeaveRequests_data_sheets.xlsx");
+    XLSX.writeFile(workbook, "disapprovedLeaveRequests_data_sheets.xlsx");
   };
 
   return (
     <Box m="20px">
       <Header
-        title="LEAVE REQUESTS REJECTED"
-        subtitle="List of Leave requests rejected of the Local Government Unit (LGU)"
+        title="LEAVE REQUESTS DISAPPROVED"
+        subtitle="List of Leave requests disapproved of the Local Government Unit (LGU)"
       />
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Button
@@ -140,7 +161,7 @@ const MAdminLeaveRejected = () => {
         }}
       >
         <DataGrid
-          rows={rejectedLeaveRequests || []}
+          rows={disapprovedLeaveRequests || []}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
           getRowId={(row) => row._id}
@@ -150,4 +171,4 @@ const MAdminLeaveRejected = () => {
   );
 };
 
-export default MAdminLeaveRejected;
+export default MAdminLeaveDisapproved;

@@ -24,9 +24,16 @@ const LeavePending = () => {
   const colors = tokens(theme.palette.mode);
   const { leaveRequests, refetchLeaveRequests } = useFetchAllLeaveRequest();
   const { approveLeaveRequest, loading: updateLoading } = useApprovedLeaveRequest();
-  
   const [selectedRequest, setSelectedRequest] = useState(null);
+
   const [rejectReason, setRejectReason] = useState("");
+  const [vacationLeaveTE, setVacationLeaveTE] = useState("");
+  const [vacationLeaveLA, setVacationLeaveLA] = useState("");
+  const [vacationLeaveBalance, setVacationLeaveBalance] = useState("");
+  const [sickLeaveTE, setSickLeaveTE] = useState("");
+  const [sickLeaveLA, setSickLeaveLA] = useState("");
+  const [sickLeaveBalance, setSickLeaveBalance] = useState("");
+
   const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false);
   const [isRejectionDialogOpen, setRejectionDialogOpen] = useState(false);
 
@@ -46,6 +53,12 @@ const LeavePending = () => {
         requestId: selectedRequest._id,
         status: "approved",
         role: "ADMIN", // Adjust role as needed
+        vacationLeaveTE,
+        vacationLeaveLA,
+        vacationLeaveBalance,
+        sickLeaveTE,
+        sickLeaveLA,
+        sickLeaveBalance,
       });
       setApprovalDialogOpen(false);
       refetchLeaveRequests();
@@ -56,9 +69,15 @@ const LeavePending = () => {
     if (selectedRequest) {
       await approveLeaveRequest({
         requestId: selectedRequest._id,
-        status: "rejected",
+        status: "disapproved",
         role: "ADMIN", // Adjust role as needed
         rejectReason,
+        vacationLeaveTE,
+        vacationLeaveLA,
+        vacationLeaveBalance,
+        sickLeaveTE,
+        sickLeaveLA,
+        sickLeaveBalance,
       });
       setRejectionDialogOpen(false);
       refetchLeaveRequests();
@@ -82,7 +101,7 @@ const LeavePending = () => {
     { field: "position", headerName: "Position", width: 200 },
     { field: "gmail", headerName: "Gmail", width: 200 },
 
-    { field: "leaveType", headerName: "Leave Type", width: 200 },
+    { field: "leaveType", headerName: "Leave Type", width: 500 },
 
     {
       field: "startDate",
@@ -101,8 +120,8 @@ const LeavePending = () => {
       ),
     },
     {
-      field: "adminApproval",
-      headerName: "Authorized Officer",
+      field: "hodApproval",
+      headerName: "Department Head",
       width: 200,
       renderCell: (params) => {
         // Determine the color based on the value
@@ -115,8 +134,8 @@ const LeavePending = () => {
       },
     },
     {
-      field: "hodApproval",
-      headerName: "Department Head",
+      field: "adminApproval",
+      headerName: "Authorized Officer",
       width: 200,
       renderCell: (params) => {
         // Determine the color based on the value
@@ -155,43 +174,49 @@ const LeavePending = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 240,
-      renderCell: (params) => (
-        <Box>
-          <Button
-            variant="contained"
-            size="small"
-            style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
-            onClick={() => downloadLeaveRequestPDF(params.row._id)}
-          >
-            View
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            style={{ marginRight: 8 }}
-            onClick={() => {
-              setSelectedRequest(params.row);
-              setApprovalDialogOpen(true);
-            }}
-          >
-            Approve
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            onClick={() => {
-              setSelectedRequest(params.row);
-              setRejectionDialogOpen(true);
-            }}
-          >
-            Reject
-          </Button>
-        </Box>
-      ),
-    },
+      width: 275,
+      renderCell: (params) => {
+        const isHodApproved = params.row.hodApproval === "approved";
+    
+        return (
+          <Box>
+            <Button
+              variant="contained"
+              size="small"
+              style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+              onClick={() => downloadLeaveRequestPDF(params.row._id)}
+            >
+              View
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                setSelectedRequest(params.row);
+                setApprovalDialogOpen(true);
+              }}
+              disabled={!isHodApproved} // Disable if HOD hasn't approved
+            >
+              Approve
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => {
+                setSelectedRequest(params.row);
+                setRejectionDialogOpen(true);
+              }}
+              disabled={!isHodApproved} // Disable if HOD hasn't approved
+            >
+              Disapprove
+            </Button>
+          </Box>
+        );
+      },
+    }    
   ];
 
   //EXPORT DATA EXCEL
@@ -284,6 +309,54 @@ const LeavePending = () => {
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to approve this Leave Request?
           </DialogContentText>
+          <TextField
+            margin="dense"
+            label="Vacation Leave Total Earned"
+            name="vacationLeaveTE"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveTE(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Vacation Leave Less this Application"
+            name="vacationLeaveLA"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveLA(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Vacation Leave Balance"
+            name="vacationLeaveBalance"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveBalance(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Total Earned"
+            name="sickLeaveTE"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveTE(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Less this Application"
+            name="sickLeaveLA"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveLA(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Balance"
+            name="sickLeaveBalance"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveBalance(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -294,10 +367,18 @@ const LeavePending = () => {
           </Button>
           <Button
             color="error"
-            disabled={updateLoading}
             onClick={handleApprove}
+            disabled={
+              updateLoading ||
+              !vacationLeaveTE ||
+              !vacationLeaveLA ||
+              !vacationLeaveBalance ||
+              !sickLeaveTE ||
+              !sickLeaveLA ||
+              !sickLeaveBalance
+            }
           >
-            {updateLoading ? "Approving..." : "Approved"}
+            {updateLoading ? "Approving..." : "Approve"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -309,14 +390,62 @@ const LeavePending = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Confirm Rejection</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirm Disapproval</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to reject this Leave Request?
+            Are you sure you want to disapprove this Leave Request?
           </DialogContentText>
           <TextField
             margin="dense"
-            label="Rejection Reason"
+            label="Vacation Leave Total Earned"
+            name="vacationLeaveTE"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveTE(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Vacation Leave Less this Application"
+            name="vacationLeaveLA"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveLA(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Vacation Leave Balance"
+            name="vacationLeaveBalance"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setVacationLeaveBalance(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Total Earned"
+            name="sickLeaveTE"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveTE(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Less thi Application"
+            name="sickLeaveLA"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveLA(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Sick Leave Balance"
+            name="sickLeaveBalance"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setSickLeaveBalance(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Disapproval Reason"
             name="rejectReason"
             fullWidth
             variant="outlined"
@@ -333,9 +462,18 @@ const LeavePending = () => {
           <Button
             onClick={handleReject}
             color="error"
-            disabled={updateLoading}
+            disabled={
+              updateLoading ||
+              !vacationLeaveTE ||
+              !vacationLeaveLA ||
+              !vacationLeaveBalance ||
+              !sickLeaveTE ||
+              !sickLeaveLA ||
+              !sickLeaveBalance ||
+              !rejectReason
+            }
           >
-            {updateLoading ? "Rejecting..." : "Reject"}
+            {updateLoading ? "Disapproving..." : "Disapprove"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -60,8 +60,7 @@ const AddEmployee = () => {
     hiredDate: "",
     employmentStatus: "",
     dateOfLastPromotion: "",
-    positionLevel: "",
-    statusOfCurrentEmployment: "",
+    currentEmployment: "",
     dateOfBirth: "",
     tin: "",
     gsis: "",
@@ -736,7 +735,6 @@ const AddEmployee = () => {
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  required
                   sx={{
                     "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#f44336",
@@ -804,50 +802,30 @@ const AddEmployee = () => {
             <Grid item xs={6}>
               <FormControl fullWidth margin="normal">
                 <InputLabel
-                  htmlFor="positionLevel"
-                  sx={{ "&.Mui-focused": { color: "#f44336" } }}
-                >
-                  Position Level
-                </InputLabel>
-                <OutlinedInput
-                  id="positionLevel"
-                  name="positionLevel"
-                  type="text"
-                  value={formData.positionLevel}
-                  onChange={handleInputChange}
-                  label="Position Level"
-                  required
-                  sx={{
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#f44336",
-                    },
-                  }}
-                />
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={6}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel
                   htmlFor="statusOfCurrentEmployment"
                   sx={{ "&.Mui-focused": { color: "#f44336" } }}
                 >
-                  Status of Current Employment
+                  Current Employment
                 </InputLabel>
-                <OutlinedInput
-                  id="statusOfCurrentEmployment"
-                  name="statusOfCurrentEmployment"
+                <Select
+                  id="currentEmployment"
+                  name="currentEmployment"
                   type="text"
-                  value={formData.statusOfCurrentEmployment}
+                  value={formData.currentEmployment}
                   onChange={handleInputChange}
-                  label="Status of Current Employment"
+                  label="Current Employment"
                   required
                   sx={{
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#f44336",
                     },
                   }}
-                />
+                >
+                  <MenuItem value="Permanent">Permanent</MenuItem>
+                  <MenuItem value="Temporary">Temporary</MenuItem>
+                  <MenuItem value="Casual">Casual</MenuItem>
+                  <MenuItem value="Co-Terminus">Co-Terminus</MenuItem>
+                </Select>
               </FormControl>
             </Grid>
 
@@ -1104,7 +1082,7 @@ const AddEmployee = () => {
                   htmlFor="reportTo"
                   sx={{ "&.Mui-focused": { color: "#f44336" } }}
                 >
-                  Reports To
+                  Reports To (Department/Unit/Section Head)
                 </InputLabel>
                 <OutlinedInput
                   id="reportTo"
@@ -1112,7 +1090,7 @@ const AddEmployee = () => {
                   type="text"
                   value={formData.reportTo}
                   onChange={handleInputChange}
-                  label="Reports To"
+                  label="Reports To (Department/Unit/Section Head)"
                   required
                   sx={{
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {

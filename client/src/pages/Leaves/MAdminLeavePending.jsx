@@ -27,9 +27,15 @@ const MAdLeavePending = () => {
   
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [daysWithPay, setDaysWithPay] = useState("");
+  const [daysWithoutPay, setDaysWithoutPay] = useState("");
+  const [others, setOthers] = useState("");
   const [isApprovalDialogOpen, setApprovalDialogOpen] = useState(false);
   const [isRejectionDialogOpen, setRejectionDialogOpen] = useState(false);
 
+  const downloadLeaveRequestPDF = (id) => {
+    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+  };
   
   // Filter the leave requests to show only pending ones
   const pendingLeaveRequests = leaveRequests.filter(
@@ -42,6 +48,10 @@ const MAdLeavePending = () => {
         requestId: selectedRequest._id,
         status: "approved",
         role: "M-ADMIN", // Adjust role as needed
+        //M-ADMIN
+        daysWithPay,
+        daysWithoutPay,
+        others,
       });
       setApprovalDialogOpen(false);
       refetchLeaveRequests();
@@ -52,7 +62,7 @@ const MAdLeavePending = () => {
     if (selectedRequest) {
       await approveLeaveRequest({
         requestId: selectedRequest._id,
-        status: "rejected",
+        status: "disapproved",
         role: "M-ADMIN", // Adjust role as needed
         rejectReason,
       });
@@ -96,21 +106,6 @@ const MAdLeavePending = () => {
         <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
       ),
     },
-    { field: "reason", headerName: "Reason", width: 200 },
-    {
-      field: "adminApproval",
-      headerName: "Authorized Officer",
-      width: 200,
-      renderCell: (params) => {
-        // Determine the color based on the value
-        const color = params.value === "approved" ? "green" : "#CDB008"; // Green for approved, else default color
-        return (
-          <span style={{ fontWeight: "bold", color }}>
-            {params.value}
-          </span>
-        );
-      },
-    },
     {
       field: "hodApproval",
       headerName: "Department Head",
@@ -125,6 +120,21 @@ const MAdLeavePending = () => {
         );
       },
     },
+    {
+      field: "adminApproval",
+      headerName: "Authorized Officer",
+      width: 200,
+      renderCell: (params) => {
+        // Determine the color based on the value
+        const color = params.value === "approved" ? "green" : "#CDB008"; // Green for approved, else default color
+        return (
+          <span style={{ fontWeight: "bold", color }}>
+            {params.value}
+          </span>
+        );
+      },
+    },
+    
     {
      field: "mAdminApproval",
      headerName: "Municipal Administrator",
@@ -152,34 +162,48 @@ const MAdLeavePending = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 170,
-      renderCell: (params) => (
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            style={{ marginRight: 8 }}
-            onClick={() => {
-              setSelectedRequest(params.row);
-              setApprovalDialogOpen(true);
-            }}
-          >
-            Approve
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            onClick={() => {
-              setSelectedRequest(params.row);
-              setRejectionDialogOpen(true);
-            }}
-          >
-            Reject
-          </Button>
-        </Box>
-      ),
+      width: 275,
+      renderCell: (params) => {
+        const isAdminApproved = params.row.adminApproval === "approved";
+
+        return (
+          <Box>
+            <Button
+              variant="contained"
+              size="small"
+              style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+              onClick={() => downloadLeaveRequestPDF(params.row._id)}
+            >
+              View
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              style={{ marginRight: 8 }}
+              onClick={() => {
+                setSelectedRequest(params.row);
+                setApprovalDialogOpen(true);
+              }}
+              disabled={!isAdminApproved}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => {
+                setSelectedRequest(params.row);
+                setRejectionDialogOpen(true);
+              }}
+              disabled={!isAdminApproved}
+            >
+              Disapprove
+            </Button>
+          </Box>
+        );
+      },
     },
   ];
 
@@ -273,6 +297,30 @@ const MAdLeavePending = () => {
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to approve this Leave Request?
           </DialogContentText>
+          <TextField
+            margin="dense"
+            label="Days with Pay"
+            name="daysWithPay"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setDaysWithPay(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Days without Pay"
+            name="daysWithoutPay"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setDaysWithoutPay(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Others (specify)"
+            name="others"
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setOthers(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -283,10 +331,10 @@ const MAdLeavePending = () => {
           </Button>
           <Button
             color="error"
-            disabled={updateLoading}
             onClick={handleApprove}
+            disabled={updateLoading || !daysWithPay || !daysWithoutPay || !others}
           >
-            {updateLoading ? "Approving..." : "Approved"}
+            {updateLoading ? "Approving..." : "Approve"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -298,14 +346,14 @@ const MAdLeavePending = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Confirm Rejection</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirm Disapproval</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to reject this Leave Request?
+            Are you sure you want to disapprove this Leave Request?
           </DialogContentText>
           <TextField
             margin="dense"
-            label="Rejection Reason"
+            label="Disapproval Reason"
             name="rejectReason"
             fullWidth
             variant="outlined"
@@ -322,9 +370,9 @@ const MAdLeavePending = () => {
           <Button
             onClick={handleReject}
             color="error"
-            disabled={updateLoading}
+            disabled={updateLoading || !rejectReason}
           >
-            {updateLoading ? "Rejecting..." : "Reject"}
+            {updateLoading ? "Disapproving..." : "Disapprove"}
           </Button>
         </DialogActions>
       </Dialog>

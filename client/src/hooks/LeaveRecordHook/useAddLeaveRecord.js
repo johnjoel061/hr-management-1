@@ -29,7 +29,7 @@ const useAddLeaveRecord = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Add Leave Record error:', error);
+      message.error(error.response.data.message || 'Error adding Leave Record');
     } finally {
       setLoading(false);
     }

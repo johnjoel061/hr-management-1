@@ -6,6 +6,7 @@ require("dotenv").config(); // Load environment variables
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const moment = require("moment");
 
 // Register User
 exports.signup = async (req, res, next) => {
@@ -19,11 +20,18 @@ exports.signup = async (req, res, next) => {
 
     // Hash the password---------NEED TO CHANGE IF CLIENT REQUEST
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    
+    // Calculate years of service
+    const hiredDate = moment(req.body.hiredDate, "MMMM DD, YYYY"); // Convert hiredDate from the specified format
+    const currentDate = moment(); // Get the current date
+    const yearsOfService = currentDate.diff(hiredDate, "years"); // Calculate the difference in years
+
 
     // Create new user
     const newUser = await User.create({
       ...req.body,
       password: hashedPassword,
+      yearsOfService, 
     });
 
     // Assign JWT (JSON Web Token)
@@ -78,10 +86,10 @@ exports.signup = async (req, res, next) => {
         salaryGrade: newUser.salaryGrade,
         stepIncrement: newUser.stepIncrement,
         hiredDate: newUser.hiredDate,
+        yearsOfService: newUser.yearsOfService,
         employmentStatus: newUser.employmentStatus,
         dateOfLastPromotion: newUser.dateOfLastPromotion,
-        positionLevel: newUser.positionLevel,
-        statusOfCurrentEmployment: newUser.statusOfCurrentEmployment,
+        currentEmployment: newUser.currentEmployment,
         dateOfSeparation: newUser.dateOfSeparation,
         causeOfSeparation: newUser.causeOfSeparation,
         dateOfBirth: newUser.dateOfBirth,
@@ -144,6 +152,7 @@ exports.login = async (req, res, next) => {
       status: "success",
       token,
       message: "Logged in successfully",
+
       user: {
         _id: user._id,
         employeeId: user.employeeId,
@@ -161,10 +170,10 @@ exports.login = async (req, res, next) => {
         firstDayOfService: user.firstDayOfService,
         stepIncrement: user.stepIncrement,
         hiredDate: user.hiredDate,
+        yearsOfService: user.yearsOfService,
         employmentStatus: user.employmentStatus,
         dateOfLastPromotion: user.dateOfLastPromotion,
-        positionLevel: user.positionLevel,
-        statusOfCurrentEmployment: user.statusOfCurrentEmployment,
+        currentEmployment: user.currentEmployment,
         dateOfSeparation: user.dateOfSeparation,
         causeOfSeparation: user.causeOfSeparation,
         dateOfBirth: user.dateOfBirth,
@@ -184,7 +193,6 @@ exports.login = async (req, res, next) => {
         educationalBackground: user.educationalBackground,
         employeeEligibilities: user.employeeEligibilities,
         learningDevelopment: user.learningDevelopment.map((entry) => ({
-          // assuming LearningDevelopmentSchema has these fields
           trainingTitle: entry.trainingTitle,
           dateStart: entry.dateStart,
           dateEnd: entry.dateEnd,
@@ -195,7 +203,6 @@ exports.login = async (req, res, next) => {
           _id: entry._id,
         })),
         leaveRecord: user.leaveRecord.map((leave) => ({
-          // assuming LeaveRecordSchema has these fields
           period: leave.period,
           particular: leave.particular,
           typeOfLeave: leave.typeOfLeave,
@@ -208,7 +215,6 @@ exports.login = async (req, res, next) => {
           _id: leave._id,
         })),
         serviceRecord: user.serviceRecord.map((service) => ({
-          // assuming serviceRecordSchema has these fields
           inclusiveDateFrom: service.inclusiveDateFrom,
           inclusiveDateTo: service.inclusiveDateTo,
           designation: service.designation,
@@ -222,12 +228,18 @@ exports.login = async (req, res, next) => {
           _id: service._id,
         })),
         performanceRating: user.performanceRating.map((perform) => ({
-          // assuming performanceRating has these fields
           semester: perform.semester,
           year: perform.year,
           numericalRating: perform.numericalRating,
           adjectivalRating: perform.adjectivalRating,
           _id: perform._id,
+        })),
+        award: user.award.map((awr) => ({
+          nameOfAward: awr.nameOfAward,
+          levelOfAward: awr.levelOfAward,
+          dateOfAward: awr.dateOfAward,
+          issuedBy: awr.issuedBy,
+          _id: awr._id,
         })),
         leaveCredit: user.leaveCredit.map((cred) => ({
           leaveType: cred.leaveType,
@@ -237,6 +249,8 @@ exports.login = async (req, res, next) => {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
+
+
     });
   } catch (error) {
     next(new createError(error.message, 500));

@@ -141,6 +141,7 @@ const EmployeeList = () => {
     { field: "salary", headerName: "Salary", width: 200 },
     { field: "stepIncrement", headerName: "Step Increment", width: 200 },
     { field: "hiredDate", headerName: "Hired Date", width: 200 },
+    { field: "yearsOfService", headerName: "Years of Service", width: 200 },
     { field: "firstDayOfService", headerName: "First Day of Service", width: 200 },
     { field: "employmentStatus", headerName: "Employment Status", width: 200 },
     {
@@ -148,13 +149,11 @@ const EmployeeList = () => {
       headerName: "Date of Last Promotion",
       width: 200,
     },
-    { field: "positionLevel", headerName: "Position Level", width: 200 },
     {
-      field: "statusOfCurrentEmployment",
-      headerName: "Status of Current Employment",
+      field: "currentEmployment",
+      headerName: "Current Employment",
       width: 250,
     },
-
     { field: "dateOfBirth", headerName: "Date of Birth", width: 200 },
     { field: "tin", headerName: "TIN", width: 200 },
     { field: "gsis", headerName: "GSIS", width: 200 },
@@ -189,7 +188,7 @@ const EmployeeList = () => {
     },
     {
       field: "reportTo",
-      headerName: "Reports To",
+      headerName: "Reports To(Department/Unit/Section Head)",
       width: 200,
     },
     {
@@ -205,7 +204,7 @@ const EmployeeList = () => {
     {
       field: "updatedAt",
       headerName: "Date and Time Updated",
-      width: 210,
+      width: 225,
       renderCell: (params) => (
         <span>
           {format(new Date(params.value), "MMMM d, yyyy - h:mm:ss aa")}
@@ -613,23 +612,21 @@ const EmployeeList = () => {
             InputLabelProps={{ shrink: true }}
           />
           <TextField
+            select
             margin="dense"
-            name="positionLevel"
-            label="Position Level"
+            name="currentEmployment"
+            label="Current Employment"
             type="text"
             fullWidth
-            value={selectedUser.positionLevel || ""}
+            value={selectedUser.currentEmployment || ""}
             onChange={handleEditInputChange}
-          />
-          <TextField
-            margin="dense"
-            name="statusOfCurrentEmployment"
-            label="Status of Current Employment"
-            type="text"
-            fullWidth
-            value={selectedUser.statusOfCurrentEmployment || ""}
-            onChange={handleEditInputChange}
-          />
+            SelectProps={{ native: true }}
+          >
+            <option value="Permanent">Permanent</option>
+            <option value="Temporary">Temporary</option>
+            <option value="Casual">Casual</option>
+            <option value="Co-Terminus">Co-Terminus</option>
+          </TextField>
 
           <TextField
             margin="dense"
@@ -750,7 +747,7 @@ const EmployeeList = () => {
           <TextField
             margin="dense"
             name="reportTo"
-            label="Reports To"
+            label="Reports To (Department/Unit/Section Head)"
             type="text"
             fullWidth
             value={selectedUser.reportTo || ""}

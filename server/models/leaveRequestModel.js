@@ -12,6 +12,8 @@ const leaveRequestSchema = new mongoose.Schema(
         salary: { type: String, required: true },
         signature: { type: String, required: true },
         dateOfFiling: { type: Date, default: Date.now }, // Store the date of filing as a Date
+        asOfDate: { type: Date, default: Date.now }, 
+
 
         leaveType: { type: String },
         otherLeaveType: { type: String },
@@ -31,9 +33,28 @@ const leaveRequestSchema = new mongoose.Schema(
         endDate: { type: Date, required: true },
         status: {
             type: String,
-            enum: ['pending', 'approved', 'rejected'],
+            enum: ['pending', 'approved', 'disapproved'],
             default: 'pending'
         },
+
+        //HOD
+        hodFirstName: { type: String },
+        hodMiddleName:{ type: String },
+        hodLastName: { type: String },
+        hodSignature: { type: String },  
+        //VACATION CREDITS
+        vacationLeaveTE: { type: String },
+        vacationLeaveLA: { type: String },
+        vacationLeaveBalance: { type: String },
+        //SICK CREDITS
+        sickLeaveTE: { type: String },
+        sickLeaveLA: { type: String },
+        sickLeaveBalance: { type: String },
+        //M-ADMIN
+        daysWithPay: { type: String },
+        daysWithoutPay: { type: String },
+        others: { type: String },
+
 
         adminApproval:{type: String,  default: 'pending'},
         hodApproval:{type: String,  default: 'pending'},

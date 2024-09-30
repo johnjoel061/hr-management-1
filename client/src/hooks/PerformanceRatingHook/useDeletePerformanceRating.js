@@ -29,7 +29,7 @@ const useDeletePerformanceRating = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Delete Performance Rating error:', error);
+      message.error(error.response.data.message || 'Error deleting Performance Rating');
     } finally {
       setLoading(false);
     }

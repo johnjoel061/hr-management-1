@@ -29,7 +29,7 @@ const useAddLeaveCredit = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Add Leave Credit error:', error);
+      message.error(error.response.data.message || 'Error adding Leave Credit');
     } finally {
       setLoading(false);
     }

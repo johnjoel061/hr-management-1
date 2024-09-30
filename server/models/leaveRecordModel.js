@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const LeaveRecordSchema = new Schema({
   period: { type: String },
   particular: { type: String },
-  typeOfLeave: { type: String },
   earned: { type: String },
   absentUnderWithPay: { type: String },
   balance: { type: String },

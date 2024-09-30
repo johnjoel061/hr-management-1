@@ -59,6 +59,10 @@ const LeaveApproved = () => {
     (request) => request.status === "approved"
   );
 
+  const downloadLeaveRequestPDF = (id) => {
+    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+  };
+
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     { field: "lastName", headerName: "Last Name", width: 200 },
@@ -107,9 +111,17 @@ const LeaveApproved = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 100,
+      width: 160,
       renderCell: (params) => (
         <Box>
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginRight: 8, backgroundColor: '#4d55b3' }}
+            onClick={() => downloadLeaveRequestPDF(params.row._id)}
+          >
+            View
+          </Button>
           <Button
             variant="contained"
             color="error"

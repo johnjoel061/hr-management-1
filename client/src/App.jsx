@@ -25,10 +25,9 @@ import EligibilityList from './pages/Eligibilities/EligibilityList';
 import AddLeaveType from './pages/Leaves/AddLeaveType';
 import LeaveTypeList from './pages/Leaves/LeaveTypeList';
 import LeaveList from './pages/Leaves/LeaveList';
-import LeaveRejected from './pages/Leaves/LeaveRejected';
+import LeaveDisapproved from './pages/Leaves/LeaveDisapproved';
 import AdminLeavePending from './pages/Leaves/AdminLeavePending';
 import LeaveApproved from './pages/Leaves/LeaveApproved';
-import EmployeeLeaveDetails from './pages/Leaves/EmployeeLeaveDetails';
 
 import Appointment from './pages/Forms/Appointment';
 import AssumptionOfDuty from './pages/Forms/AssumptionOfDuty';
@@ -64,14 +63,14 @@ import RequestFormRejected from './pages/RequestForm/RequestFormRejected';
 import DashboardHOD from './pages/Dashboard/HODDashboard/DashboardHOD';
 import HODSidebar from './pages/Dashboard/HODDashboard/HODSidebar';
 import HODLeavePending from './pages/Leaves/HODLeavePending';
-import HODLeaveRejected from './pages/Leaves/HODLeaveRejected';
+import HODLeaveDisapproved from './pages/Leaves/HODLeaveDisapproved';
 import HODLeaveApproved from './pages/Leaves/HODLeaveApproved';
 
 import DashboardMAdmin from './pages/Dashboard/MAdminDashboard/DashboardMAdmin';
 import MAdminSidebar from './pages/Dashboard/MAdminDashboard/MAdminSidebar';
 import MAdLeavePending from './pages/Leaves/MAdminLeavePending';
 import MAdminLeaveApproved from './pages/Leaves/MAdminLeaveApproved';
-import MAdminLeaveRejected from './pages/Leaves/MAdminLeaveRejected';
+import MAdminLeaveDisapproved from './pages/Leaves/MAdminLeaveDisapproved';
 
 
 const App = () => {
@@ -131,8 +130,7 @@ const App = () => {
                 <Route path="/leave-list" element={isAuthenticated && userData.role === 'ADMIN' ? <LeaveList /> : <Navigate to="/" />} />
                 <Route path="/leave-pending" element={isAuthenticated && userData.role === 'ADMIN' ? <AdminLeavePending /> : <Navigate to="/" />} />
                 <Route path="/leave-approved" element={isAuthenticated && userData.role === 'ADMIN' ? <LeaveApproved /> : <Navigate to="/" />} />
-                <Route path="/leave-rejected" element={isAuthenticated && userData.role === 'ADMIN' ? <LeaveRejected /> : <Navigate to="/" />} />
-                <Route path="/leave-pending/employee-leave-details/:id" element={isAuthenticated && userData.role === 'ADMIN' ? <EmployeeLeaveDetails /> : <Navigate to="/" />} />
+                <Route path="/leave-disapproved" element={isAuthenticated && userData.role === 'ADMIN' ? <LeaveDisapproved /> : <Navigate to="/" />} />
 
                 {/*PAGES*/}
                 <Route path="/calendar" element={isAuthenticated && userData.role === 'ADMIN' ? <AdminCalendar /> : <Navigate to="/" />} />
@@ -185,7 +183,7 @@ const App = () => {
                 <Route path="/hod-leave-list" element={isAuthenticated && userData.role === 'HOD' ? <LeaveList /> : <Navigate to="/" />} />
                 <Route path="/hod-leave-pending" element={isAuthenticated && userData.role === 'HOD' ? <HODLeavePending /> : <Navigate to="/" />} />
                 <Route path="/hod-leave-approved" element={isAuthenticated && userData.role === 'HOD' ? <HODLeaveApproved /> : <Navigate to="/" />} />
-                <Route path="/hod-leave-rejected" element={isAuthenticated && userData.role === 'HOD' ? <HODLeaveRejected/> : <Navigate to="/" />} />
+                <Route path="/hod-leave-disapproved" element={isAuthenticated && userData.role === 'HOD' ? <HODLeaveDisapproved/> : <Navigate to="/" />} />
 
                 {/*HOD SECTION*/}
                 <Route path="/m-admin-dashboard" element={isAuthenticated && userData.role === 'M-ADMIN' ? <DashboardMAdmin /> : <Navigate to="/" />} />
@@ -193,7 +191,7 @@ const App = () => {
                 <Route path="/m-admin-leave-list" element={isAuthenticated && userData.role === 'M-ADMIN' ? <LeaveList /> : <Navigate to="/" />} />
                 <Route path="/m-admin-leave-pending" element={isAuthenticated && userData.role === 'M-ADMIN' ? <MAdLeavePending/> : <Navigate to="/" />} />
                 <Route path="/m-admin-leave-approved" element={isAuthenticated && userData.role === 'M-ADMIN' ? <MAdminLeaveApproved /> : <Navigate to="/" />} />
-                <Route path="/m-admin-leave-rejected" element={isAuthenticated && userData.role === 'M-ADMIN' ? <MAdminLeaveRejected /> : <Navigate to="/" />} />
+                <Route path="/m-admin-leave-disapproved" element={isAuthenticated && userData.role === 'M-ADMIN' ? <MAdminLeaveDisapproved /> : <Navigate to="/" />} />
                 
                 {/*FORGOT PASSWORD SECTION*/}
                 <Route path="/forgot-password" element={<ForgotPassword />} />

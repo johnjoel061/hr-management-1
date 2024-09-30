@@ -124,6 +124,7 @@ const RequestFormRejected = () => {
         </span>
       ),
     },
+    { field: "rejectReason", headerName: "Reason/s why rejected", width: 200 },
     {
       field: "actions",
       headerName: "Actions",

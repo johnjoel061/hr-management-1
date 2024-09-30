@@ -33,7 +33,6 @@ const useAddRequestForm = () => {
         setError('An error occurred. Please try again.');
       }
       message.error(error.response.data.message || 'Error submitting request certification');
-      message.error('Add request certification error:', error);
       
     } finally {
       setLoading(false);

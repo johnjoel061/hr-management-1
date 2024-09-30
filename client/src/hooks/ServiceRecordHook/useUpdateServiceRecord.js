@@ -33,7 +33,7 @@ const useUpdateServiceRecord = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error('Update Service Record error:', error);
+      message.error(error.response.data.message || 'Error updating Service Record');
     } finally {
       setLoading(false);
     }

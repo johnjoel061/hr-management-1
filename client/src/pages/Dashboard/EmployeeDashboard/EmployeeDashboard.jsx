@@ -30,7 +30,6 @@ import useAddLeaveRequest from "../../../hooks/LeaveRequestHook/useAddLeaveReque
 import useFetchLeaveType from "../../../hooks/LeaveTypeHook/useFetchLeaveType";
 import useAddRequestForm from "../../../hooks/RequestFormHook/useAddRequestForm";
 import useFetchUserById from "../../../hooks/UserHook/useFetchUserById";
-
 import Footer from "../../global/Footer";
 import { useState, useEffect } from "react";
 
@@ -147,6 +146,23 @@ const EmployeeDashboard = () => {
     }
   };
 
+  //SIGNATURE
+  const [isModalSignatureVisible, setIsModalSignatureVisible] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
+
+  const showConsentModal = () => {
+    setIsModalSignatureVisible(true);
+  };
+
+  const handleSignatureOk = () => {
+    setConsentGiven(true);
+    setIsModalSignatureVisible(false);
+  };
+
+  const handleSignatureCancel = () => {
+    setIsModalSignatureVisible(false);
+  };
+
   const handleLeaveRequest = async (values) => {
     const leaveRequestData = {
       firstName: userData.firstName,
@@ -158,7 +174,7 @@ const EmployeeDashboard = () => {
       department: userData.officeAssignment,
       salary: userData.salary,
       signature: userData.signature,
-
+      
       leaveType: values.leaveType,
       otherLeaveType: values.otherLeaveType,
       vacationSpecialLeave: values.vacationSpecialLeave,
@@ -308,26 +324,26 @@ const EmployeeDashboard = () => {
   const requestFormHandleOk = () => {
     form.validateFields().then((values) => {
       // Validation for service record date range
-      if (
-        selectedCertification === "serviceRecord" &&
-        (!serviceRecordDates.from || !serviceRecordDates.to)
-      ) {
-        message.warning(
-          "Please select a valid date range for the service record."
-        );
-        return;
-      }
+      // if (
+      //   selectedCertification === "serviceRecord" &&
+      //   (!serviceRecordDates.from || !serviceRecordDates.to)
+      // ) {
+      //   message.warning(
+      //     "Please select a valid date range for the service record."
+      //   );
+      //   return;
+      // }
 
       // Validation for performance rating date range
-      if (
-        selectedCertification === "certificateOfRating" &&
-        (!performanceRatingDates.from || !performanceRatingDates.to)
-      ) {
-        message.warning(
-          "Please select a valid date range for the performance rating."
-        );
-        return;
-      }
+      // if (
+      //   selectedCertification === "certificateOfRating" &&
+      //   (!performanceRatingDates.from || !performanceRatingDates.to)
+      // ) {
+      //   message.warning(
+      //     "Please select a valid date range for the performance rating."
+      //   );
+      //   return;
+      // }
 
       // Validation for custom certification input
       if (
@@ -355,15 +371,15 @@ const EmployeeDashboard = () => {
       }
 
       // Include date range if applicable
-      if (selectedCertification === "serviceRecord") {
-        values.dateFrom = serviceRecordDates.from;
-        values.dateTo = serviceRecordDates.to;
-      }
+      // if (selectedCertification === "serviceRecord") {
+      //   values.dateFrom = serviceRecordDates.from;
+      //   values.dateTo = serviceRecordDates.to;
+      // }
 
-      if (selectedCertification === "certificateOfRating") {
-        values.dateFrom = performanceRatingDates.from;
-        values.dateTo = performanceRatingDates.to;
-      }
+      // if (selectedCertification === "certificateOfRating") {
+      //   values.dateFrom = performanceRatingDates.from;
+      //   values.dateTo = performanceRatingDates.to;
+      // }
 
       // Include custom certification if applicable
       if (selectedCertification === "otherTypesOfCertification") {
@@ -461,8 +477,7 @@ const EmployeeDashboard = () => {
   //========================LEAVE RECORD COLUMNS START==========================//
   const leaveRecordColumns = [
     { field: "period", headerName: "PERIOD", width: 150 },
-    { field: "particular", headerName: "PARTICULARS", width: 200 },
-    { field: "typeOfLeave", headerName: "TYPE OF LEAVE", width: 200 },
+    { field: "particular", headerName: "PARTICULARS", width: 500 },
     { field: "earned", headerName: "EARNED", width: 150 },
     {
       field: "absentUnderWithPay",
@@ -486,7 +501,7 @@ const EmployeeDashboard = () => {
     {
       field: "actionTakenOnForLeave",
       headerName: "ACTION TAKEN ON APPLICATION FOR LEAVE",
-      width: 280,
+      width: 300,
     },
   ];
   //========================LEAVE RECORD COLUMNS END==========================//
@@ -531,9 +546,18 @@ const EmployeeDashboard = () => {
       field: "separationDate",
       headerName: "SEPARATION DATE",
       width: 200,
-      renderCell: (params) => (
-        <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
-      ),
+      renderCell: (params) => {
+        const dateValue = params.value ? new Date(params.value) : null;
+
+        // Check if date is valid
+        return (
+          <span>
+            {dateValue && !isNaN(dateValue.getTime())
+              ? format(dateValue, "MMMM d, yyyy")
+              : "N/A"}
+          </span>
+        );
+      },
     },
     {
       field: "separationCause",
@@ -550,14 +574,30 @@ const EmployeeDashboard = () => {
     { field: "adjectivalRating", headerName: "ADJECTIVAL RATING", width: 310 },
   ];
   //========================PERFORMANCE RATING COLUMNS END========================//
-  //========================PERFORMANCE START========================//
+  //========================CREDITS START========================//
+  const awardColumns = [
+    { field: "nameOfAward", headerName: "NAME OF AWARD", width: 330 },
+    { field: "levelOfAward", headerName: "LEVEL OF AWARD", width: 300 },
+    {
+      field: "dateOfAward",
+      headerName: "DATE OF AWARD",
+      width: 300,
+      renderCell: (params) => (
+        <span>{format(new Date(params.value), "MMMM d, yyyy")}</span>
+      ),
+    },
+    { field: "issuedBy", headerName: "ISSUED BY", width: 300 },
+  ];
+  //========================CREDITS RATING COLUMNS END========================//
+
+  //========================CREDITS START========================//
   const leaveCreditColumns = [
     { field: "leaveType", headerName: "LEAVE TYPE", width: 600 },
     { field: "credit", headerName: "CREDITS", width: 600 },
   ];
-  //========================PERFORMANCE RATING COLUMNS END========================//
-  
-  
+  //========================CREDITS RATING COLUMNS END========================//
+
+  console.log("aWARD", userData.award);
   return (
     <Wrapper>
       <StyledCard>
@@ -682,21 +722,51 @@ const EmployeeDashboard = () => {
                       marginTop: "5px",
                     }}
                   />
-                  <Upload {...uploadSignatureProps} showUploadList={false}>
+                  {!consentGiven ? (
+                    // Button to open the consent modal
                     <Button
                       type="primary"
-                      loading={signatureLoading}
+                      onClick={showConsentModal}
                       style={{
                         margin: "10px 0",
-                        backgroundColor: "#E24036",
                         color: "#ffffff",
                       }}
                     >
-                      Change Signature
+                      Upload Signature
                     </Button>
-                  </Upload>
+                  ) : (
+                    // Button that allows uploading after consent
+                    <Upload {...uploadSignatureProps} showUploadList={false}>
+                      <Button
+                        type="primary"
+                        loading={signatureLoading}
+                        style={{
+                          margin: "10px 0",
+                          color: "#ffffff",
+                        }}
+                      >
+                        Upload Signature
+                      </Button>
+                    </Upload>
+                  )}
                 </Col>
               </Paragraph>
+
+              {/* Modal for consent */}
+              <Modal
+                title="Signature Consent"
+                visible={isModalSignatureVisible}
+                onOk={handleSignatureOk}
+                onCancel={handleSignatureCancel}
+                okText="Yes, I agree"
+                cancelText="Cancel"
+              >
+                <p>
+                  By clicking "Yes, I agree", you are allowing your signature to
+                  be used in this system. Please confirm your consent to
+                  continue.
+                </p>
+              </Modal>
             </Col>
 
             <Col xs={24} md={12}>
@@ -729,20 +799,17 @@ const EmployeeDashboard = () => {
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>Position Level:</strong> {userData.positionLevel}
-                <br />
-              </Paragraph>
-              <Paragraph>
                 <strong>Employment Status:</strong> {userData.employmentStatus}
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>Status of Current Employment:</strong>{" "}
-                {userData.statusOfCurrentEmployment}
+                <strong>Current Employment:</strong>{" "}
+                {userData.currentEmployment}
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>Role:</strong> {userData.role}
+                <strong>Years of Service:</strong>{" "}
+                {userData.yearsOfService}
                 <br />
               </Paragraph>
             </Col>
@@ -812,21 +879,58 @@ const EmployeeDashboard = () => {
                 <BoldText>Government IDs</BoldText>
               </Title>
               <Paragraph>
-                <strong>TIN Number:</strong> {userData.tin}
+                <strong>TIN Number:</strong>{" "}
+                {userData.tin}
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>GSIS Number:</strong> {userData.gsis}
+                <strong>GSIS Number:</strong>{" "}
+                {userData.gsis}
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>PAG-IBIG Number:</strong> {userData.pagIbig}
+                <strong>PAG-IBIG Number:</strong>{" "}
+                {userData.pagIbig}
                 <br />
               </Paragraph>
               <Paragraph>
-                <strong>PhilHealth Number:</strong> {userData.philHealth}
+                <strong>PhilHealth Number:</strong>{" "}
+                {userData.philHealth}
                 <br />
               </Paragraph>
+            </Col>
+            <Col xs={24} md={12}>
+              <Title level={3} style={{ marginBottom: "16px" }}>
+                <BoldText>LINKs</BoldText>
+                <Paragraph>
+                  <strong>Bureau of Internal Revenue(BIR):</strong>{" "} 
+                  <a href="https://www.bir.gov.ph" target="_blank" rel="noopener noreferrer">
+                    https://www.bir.gov.ph
+                  </a>
+                  <br />
+                </Paragraph>
+                <Paragraph>
+                  <strong>Government Service Insurance System Government Service Insurance System(GSIS):</strong>{" "} 
+                  <a href="https://www.gsis.gov.ph" target="_blank" rel="noopener noreferrer">
+                    https://www.gsis.gov.ph
+                  </a>
+                  <br />
+                </Paragraph>
+                <Paragraph>
+                  <strong>Pag-IBIG:</strong>{" "} 
+                  <a href="https://www.pagibigfund.gov.ph" target="_blank" rel="noopener noreferrer">
+                    https://www.pagibigfund.gov.ph
+                  </a>
+                  <br />
+                </Paragraph>
+                <Paragraph>
+                  <strong>PhilHealth:</strong>{" "} 
+                  <a href="https://www.philhealth.gov.ph" target="_blank" rel="noopener noreferrer">
+                    https://www.philhealth.gov.ph
+                  </a>
+                  <br />
+                </Paragraph>
+              </Title>
             </Col>
           </Row>
         </Card>
@@ -1057,6 +1161,58 @@ const EmployeeDashboard = () => {
                   <DataGrid
                     rows={userData.performanceRating || []}
                     columns={performanceRatingColumns}
+                    getRowId={(row) => row._id || row.id || Math.random()}
+                    components={{ Toolbar: GridToolbar }}
+                  />
+                </Box>
+              </Typography>
+            </Grid>
+          </Grid>
+        </Card>
+
+        <Card variant="outlined" style={{ marginTop: "30px" }}>
+          <Grid container>
+            <Grid item xs={12} md={12}>
+              <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                <Title level={3} style={{ marginBottom: "16px" }}>
+                  <BoldText>AWARDS</BoldText>
+                </Title>
+                <Box
+                  m="10px 0 0 0"
+                  height="calc(80vh - 200px)" // Adjust this value as needed for responsiveness
+                  width="100%"
+                  sx={{
+                    "& .MuiDataGrid-root": {
+                      border: "none",
+                    },
+                    "& .MuiDataGrid-cell": {
+                      borderBottom: "none",
+                    },
+                    "& .name-column--cell": {
+                      color: colors.greenAccent[300],
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      backgroundColor: colors.blueAccent[700],
+                      borderBottom: "none",
+                    },
+                    "& .MuiDataGrid-virtualScroller": {
+                      backgroundColor: colors.primary[400],
+                    },
+                    "& .MuiDataGrid-footerContainer": {
+                      borderTop: "none",
+                      backgroundColor: colors.blueAccent[700],
+                    },
+                    "& .MuiCheckbox-root": {
+                      color: `${colors.greenAccent[200]} !important`,
+                    },
+                    "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                      color: `${colors.grey[100]} !important`,
+                    },
+                  }}
+                >
+                  <DataGrid
+                    rows={userData.award || []}
+                    columns={awardColumns}
                     getRowId={(row) => row._id || row.id || Math.random()}
                     components={{ Toolbar: GridToolbar }}
                   />
@@ -1356,8 +1512,10 @@ const EmployeeDashboard = () => {
               ]}
             >
               <Radio.Group>
-                <Radio value="jobOrder">Job Order</Radio>
-                <Radio value="regular">Regular</Radio>
+                <Radio value="Regular">Regular</Radio>
+                <Radio value="Elected">Elected</Radio>
+                <Radio value="Co-Terminus">Co-Terminus</Radio>
+                <Radio value="Retired">Retired</Radio>
               </Radio.Group>
             </Form.Item>
 

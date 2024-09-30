@@ -2,15 +2,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 
-const useUpdateLeaveCredit = () => {
+const useUpdateAward = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const updateLeaveCredit = async (userId, lcId, updatedData) => {
+  const updateAward = async (userId, awId, updatedData) => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/leave-credit/${userId}/${lcId}`,
+        `http://localhost:3000/api/employee/awards/${userId}/${awId}`,
         updatedData,
         {
           headers: {
@@ -20,12 +20,12 @@ const useUpdateLeaveCredit = () => {
       );
 
       if (response.status === 200) {
-        message.success('Leave Credit entry updated successfully');
+        message.success('Award entry updated successfully');
         setLoading(false);
         setError(null);
         return response.data.data;
       } else {
-        setError('Failed to update Leave Credit entry');
+        setError('Failed to update Award entry');
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -33,13 +33,13 @@ const useUpdateLeaveCredit = () => {
       } else {
         setError('An error occurred. Please try again.');
       }
-      message.error(error.response.data.message || 'Error updating Leave Credit');
+      message.error('Update Award error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  return { updateLeaveCredit, loading, error };
+  return { updateAward, loading, error };
 };
 
-export default useUpdateLeaveCredit;
+export default useUpdateAward;

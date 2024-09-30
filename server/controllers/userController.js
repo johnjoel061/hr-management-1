@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require("moment");
 const User = require("../models/userModel");
 const createError = require("../utils/appError");
 const path = require('path');
@@ -29,12 +30,12 @@ exports.getAllUsers = async (req, res, next) => {
         salaryGrade: user.salaryGrade,
         stepIncrement: user.stepIncrement,
         hiredDate: user.hiredDate,
+        yearsOfService: user.yearsOfService,
         employmentStatus: user.employmentStatus,
         dateOfLastPromotion: user.dateOfLastPromotion,
-        positionLevel: user.positionLevel,
         salary: user.salary,
         firstDayOfService: user.firstDayOfService, 
-        statusOfCurrentEmployment: user.statusOfCurrentEmployment,
+        currentEmployment: user.currentEmployment,
         dateOfSeparation: user.dateOfSeparation,
         causeOfSeparation: user.causeOfSeparation,
         dateOfBirth: user.dateOfBirth,
@@ -91,12 +92,12 @@ exports.getUserById = async (req, res, next) => {
         salaryGrade: user.salaryGrade,
         stepIncrement: user.stepIncrement,
         hiredDate: user.hiredDate,
+        yearsOfService: user.yearsOfService,
         employmentStatus: user.employmentStatus,
         dateOfLastPromotion: user.dateOfLastPromotion,
         salary: user.salary,
         firstDayOfService: user.firstDayOfService, 
-        positionLevel: user.positionLevel,
-        statusOfCurrentEmployment: user.statusOfCurrentEmployment,
+        currentEmployment: user.currentEmployment,
         dateOfSeparation: user.dateOfSeparation,
         causeOfSeparation: user.causeOfSeparation,
         dateOfBirth: user.dateOfBirth,
@@ -137,8 +138,16 @@ exports.updateUserById = async (req, res, next) => {
       updates.password = await bcrypt.hash(updates.password, salt);
     }
 
-    const user = await User.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+    // Check if hiredDate is being updated
+    if (updates.hiredDate) {
+      const hiredDate = moment(updates.hiredDate, "MMMM DD, YYYY"); 
+      const currentDate = moment(); 
+      const yearsOfService = currentDate.diff(hiredDate, "years"); 
+      updates.yearsOfService = yearsOfService; 
+    }
 
+    const user = await User.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+    
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -163,12 +172,12 @@ exports.updateUserById = async (req, res, next) => {
         salaryGrade: user.salaryGrade,
         stepIncrement: user.stepIncrement,
         hiredDate: user.hiredDate,
+        yearsOfService: user.yearsOfService,
         employmentStatus: user.employmentStatus,
         dateOfLastPromotion: user.dateOfLastPromotion,
-        positionLevel: user.positionLevel,
         salary: user.salary,
         firstDayOfService: user.firstDayOfService, 
-        statusOfCurrentEmployment: user.statusOfCurrentEmployment,
+        currentEmployment: user.currentEmployment,
         dateOfSeparation: user.dateOfSeparation,
         causeOfSeparation: user.causeOfSeparation,
         dateOfBirth: user.dateOfBirth,
@@ -227,12 +236,12 @@ exports.deleteUserById = async (req, res, next) => {
         salaryGrade: user.salaryGrade,
         stepIncrement: user.stepIncrement,
         hiredDate: user.hiredDate,
+        yearsOfService: user.yearsOfService,
         employmentStatus: user.employmentStatus,
         dateOfLastPromotion: user.dateOfLastPromotion,
-        positionLevel: user.positionLevel,
         salary: user.salary,
         firstDayOfService: user.firstDayOfService, 
-        statusOfCurrentEmployment: user.statusOfCurrentEmployment,
+        currentEmployment: user.currentEmployment,
         dateOfSeparation: user.dateOfSeparation,
         causeOfSeparation: user.causeOfSeparation,
         dateOfBirth: user.dateOfBirth,
