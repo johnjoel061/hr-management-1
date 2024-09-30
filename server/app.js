@@ -43,7 +43,6 @@ const calendarRouter = require('./routes/calendarRoute');
 const orgStructureRouter = require('./routes/orgStructureRoute');
 const settingsRouter = require('./routes/settingsRoute');
 const leaveRequestRouter = require('./routes/leaveRequestRoute');
-const leaveCreditRouter = require('./routes/leaveCreditRoute');
 
 const requestFormRouter = require('./routes/requestFormRoute');
 const awardRouter = require('./routes/awardRoute');
@@ -107,7 +106,6 @@ app.use("/api/employee/leave-record", leaveRecordRouter);
 app.use("/api/employee/service-record", serviceRecordRouter);
 app.use("/api/employee/performance-rating", performanceRatingRouter);
 app.use("/api/employee/awards", awardRouter);
-app.use("/api/employee/leave-credit", leaveCreditRouter);
 
 app.use("/api/faqs", faqRouter); 
 app.use("/api/privacy-policy", privacyPolicyRouter); 

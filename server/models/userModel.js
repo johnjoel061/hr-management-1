@@ -3,7 +3,6 @@ const LearningDevelopmentSchema = require("./learningDevelopmentModel"); // Impo
 const LeaveRecordSchema = require("./leaveRecordModel"); // Import the schema
 const ServiceRecordSchema = require("./serviceRecordModel"); // Import the schema
 const PerformanceRatingSchema = require("./performanceRatingModel"); // Import the schema
-const LeaveCreditSchema = require("./leaveCreditModel");
 const AwardSchema = require("./awardModel");
 
 const userSchema = new mongoose.Schema(
@@ -87,7 +86,6 @@ const userSchema = new mongoose.Schema(
     serviceRecord: [ServiceRecordSchema],
     performanceRating: [PerformanceRatingSchema],
     award: [AwardSchema],
-    leaveCredit: [LeaveCreditSchema],
 
     verificationCode: { type: String, default: '' },
     verificationCodeExpires: { type: Date, default: null },

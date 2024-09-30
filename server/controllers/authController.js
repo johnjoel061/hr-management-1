@@ -241,11 +241,7 @@ exports.login = async (req, res, next) => {
           issuedBy: awr.issuedBy,
           _id: awr._id,
         })),
-        leaveCredit: user.leaveCredit.map((cred) => ({
-          leaveType: cred.leaveType,
-          credit: cred.credit,
-          _id: cred._id,
-        })),
+
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
