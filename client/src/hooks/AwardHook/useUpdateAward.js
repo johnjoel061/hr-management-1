@@ -10,7 +10,7 @@ const useUpdateAward = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/awards/${userId}/${awId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/awards/${userId}/${awId}`,
         updatedData,
         {
           headers: {
