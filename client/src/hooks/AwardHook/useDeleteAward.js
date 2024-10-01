@@ -9,7 +9,7 @@ const useDeleteAward = () => {
   const deleteAward = async (userId, awId) => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/employee/awards/${userId}/${awId}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/employee/awards/${userId}/${awId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
