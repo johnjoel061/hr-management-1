@@ -9,7 +9,7 @@ const useDeleteLearningDevelopment = () => {
   const deleteLearningDevelopment = async (userId, ldId) => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/employee/learning-development/${userId}/${ldId}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/employee/learning-development/${userId}/${ldId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
