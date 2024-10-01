@@ -14,6 +14,11 @@ const deleteFile = (filePath) => {
   }
 };
 
+// Helper function to get the correct protocol (https)
+const getProtocol = (req) => {
+  return req.get('x-forwarded-proto') === 'https' ? 'https' : req.protocol;
+};
+
 // Update Settings
 exports.updateSettings = async (req, res) => {
   try {
@@ -38,7 +43,8 @@ exports.updateSettings = async (req, res) => {
       if (req.files && req.files[fileKey]) {
         const previousFilePath = path.join(__dirname, '..', 'uploads', 'settings', path.basename(settings[fieldName]));
         deleteFile(previousFilePath);
-        settings[fieldName] = `${req.protocol}://${req.get('host')}/uploads/settings/${req.files[fileKey][0].filename}`;
+        // Use getProtocol to ensure the correct protocol (https)
+        settings[fieldName] = `${getProtocol(req)}://${req.get('host')}/uploads/settings/${req.files[fileKey][0].filename}`;
       }
     };
 
