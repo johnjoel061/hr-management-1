@@ -9,7 +9,7 @@ const useRequestPasswordReset = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/request-password-reset', { email });
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/auth/request-password-reset', { email });
       message.success(response.data.message);
     } catch (err) {
       message.error(err.response?.data?.message || 'An error occurred');
