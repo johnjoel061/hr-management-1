@@ -164,15 +164,15 @@ app.use("/", express.static(path.join(__dirname, "public")));
 // Serve Vite app files in development
 if (process.env.NODE_ENV === "development") {
   // Use the Vite dev server URL to proxy API requests
-  app.use((req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      next(); // Let API requests go through
-    } else {
-      // For all other requests, send to Vite
-      const viteDevServerURL = 'https://hr-management-1-baxp.onrender.com'; // Default Vite port
-      res.redirect(viteDevServerURL + req.originalUrl);
-    }
-  });
+  // app.use((req, res, next) => {
+  //   if (req.originalUrl.startsWith('/api')) {
+  //     next(); // Let API requests go through
+  //   } else {
+  //     // For all other requests, send to Vite
+  //     const viteDevServerURL = 'https://hr-management-1-baxp.onrender.com'; // Default Vite port
+  //     res.redirect(viteDevServerURL + req.originalUrl);
+  //   }
+  // });
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -181,6 +181,13 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
+
+app.use((req, res, next) => {
+  if (!req.secure) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
 
 
 // Handle 404 errors
