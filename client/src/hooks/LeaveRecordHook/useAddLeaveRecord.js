@@ -9,7 +9,7 @@ const useAddLeaveRecord = () => {
   const addLeaveRecord = async (userId, lrData) => {
     setLoading(true);
     try {
-      const response = await axios.post(`http://localhost:3000/api/employee/leave-record/${userId}/add`, lrData, {
+      const response = await axios.post(`https://hr-management-1-baxp.onrender.com/api/employee/leave-record/${userId}/add`, lrData, {
         headers: {
           'Content-Type': 'application/json',
         },
