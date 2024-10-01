@@ -8,7 +8,7 @@ const useUpdateLeaveTypeById = () => {
   const updateLeaveTypeById = async (id, updatedData) => {
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3000/api/leave-type/${id}`, updatedData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/leave-type/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
