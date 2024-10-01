@@ -25,7 +25,7 @@ const useUpdateSettings = () => {
         }
       }
 
-      const response = await axios.put(`http://localhost:3000/api/settings/${id}`, formData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/settings/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
