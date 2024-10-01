@@ -163,11 +163,19 @@ if (process.env.NODE_ENV === "development") {
       next(); // Let API requests go through
     } else {
       // For all other requests, send to Vite
-      const viteDevServerURL = 'https://hr-management-1-frontend.onrender.com'; // Default Vite port
+      const viteDevServerURL = 'http://localhost:5173'; // Default Vite port
       res.redirect(viteDevServerURL + req.originalUrl);
     }
   });
 }
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
+
 
 // Handle 404 errors
 app.all('*', (req, res) => {
