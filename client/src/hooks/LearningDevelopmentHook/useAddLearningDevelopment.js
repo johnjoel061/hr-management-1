@@ -9,7 +9,7 @@ const useAddLearningDevelopment = () => {
   const addLearningDevelopment = async (userId, ldData) => {
     setLoading(true);
     try {
-      const response = await axios.post(`http://localhost:3000/api/employee/learning-development/${userId}/add`, ldData, {
+      const response = await axios.post(`https://hr-management-1-baxp.onrender.com/api/employee/learning-development/${userId}/add`, ldData, {
         headers: {
           'Content-Type': 'application/json',
         },
