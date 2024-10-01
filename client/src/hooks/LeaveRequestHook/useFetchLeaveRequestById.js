@@ -10,7 +10,7 @@ const useFetchLeaveRequestById = (leaveRequestId) => {
     setLoading(true); // Set loading state to true when fetching starts
     try {
       console.log(`Fetching leave request with ID: ${leaveRequestId}`);
-      const response = await axios.get(`http://localhost:3000/api/employee/leave-requests/${leaveRequestId}`, {
+      const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/employee/leave-requests/${leaveRequestId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
