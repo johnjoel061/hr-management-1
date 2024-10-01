@@ -9,7 +9,7 @@ const useFetchSettingsById = (id) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/settings/${id}`);
+        const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/settings/${id}`);
         setSettings(response.data.settings);
         setLoading(false);
       } catch (err) {
