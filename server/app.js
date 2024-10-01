@@ -115,6 +115,14 @@ app.use("/api/settings", settingsRouter);
 app.use("/api/employee", leaveRequestRouter); 
 app.use("/api/request-form", requestFormRouter); 
 
+// Middleware to force HTTPS
+app.use((req, res, next) => {
+  if (req.secure || req.get('x-forwarded-proto') === 'https') {
+    return next();
+  } else {
+    res.redirect(`https://${req.get('host')}${req.url}`);
+  }
+});
 
 //===== STATIC FILES SETUP ====//
 // Define the upload directory for profile pictures
