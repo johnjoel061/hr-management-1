@@ -11,7 +11,7 @@ const useDeleteAssumptionOfDutyById = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/assumption-of-duty/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/assumption-of-duty/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
