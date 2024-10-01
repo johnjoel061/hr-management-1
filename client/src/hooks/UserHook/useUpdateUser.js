@@ -8,7 +8,7 @@ const useUpdateUser = () => {
   const updateUser = async (id, updates) => {
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3000/api/employee/users/${id}`, updates, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/employee/users/${id}`, updates, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
