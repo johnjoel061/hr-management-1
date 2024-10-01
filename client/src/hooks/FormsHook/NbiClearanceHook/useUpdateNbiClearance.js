@@ -29,7 +29,7 @@ const useUpdateNbiClearanceById = () => {
         }
       });
 
-      const response = await axios.put(`http://localhost:3000/api/nbi-clearance/${id}`, formData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/nbi-clearance/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
