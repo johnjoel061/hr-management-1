@@ -11,7 +11,7 @@ const useUploadAvatar = (userId, onAvatarUpdate) => {
     formData.append('avatar', file);
 
     try {
-      const response = await axios.put(`http://localhost:3000/api/employee/users/${userId}/avatar`, formData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/employee/users/${userId}/avatar`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data',
