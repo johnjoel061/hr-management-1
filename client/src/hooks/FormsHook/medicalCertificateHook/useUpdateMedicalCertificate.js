@@ -28,7 +28,7 @@ const useUpdateMedicalCertificateById = () => {
         }
       });
 
-      const response = await axios.put(`http://localhost:3000/api/medical-certificate/${id}`, formData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/medical-certificate/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
