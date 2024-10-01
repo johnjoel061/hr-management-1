@@ -11,7 +11,7 @@ const useDeleteCopiesOfDiscipActionById = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/copies-of-disciplinary-actions/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/copies-of-disciplinary-actions/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
