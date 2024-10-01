@@ -9,7 +9,7 @@ const useDeleteServiceRecord = () => {
   const deleteServiceRecord = async (userId, srId) => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/employee/service-record/${userId}/${srId}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/employee/service-record/${userId}/${srId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
