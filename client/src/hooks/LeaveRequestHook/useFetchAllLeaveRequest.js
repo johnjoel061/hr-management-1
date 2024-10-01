@@ -9,7 +9,7 @@ const useFetchAllLeaveRequest = () => {
   const fetchAllLeaveRequests = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/api/employee/leave-requests/all', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/employee/leave-requests/all', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
