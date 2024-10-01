@@ -11,7 +11,7 @@ const useDeleteOathOfOfficeById = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/oath-of-office/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/oath-of-office/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
