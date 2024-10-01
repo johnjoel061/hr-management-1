@@ -10,7 +10,7 @@ const useUpdateServiceRecord = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/service-record/${userId}/${srId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/service-record/${userId}/${srId}`,
         updatedData,
         {
           headers: {
