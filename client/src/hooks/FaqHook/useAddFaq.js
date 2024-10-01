@@ -10,7 +10,7 @@ const useAddFaq = () => {
     setLoading(true);
     try {
       // Make API request to add eligibility
-      const response = await axios.post('http://localhost:3000/api/faqs/add', faqData, {
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/faqs/add', faqData, {
         headers: {
           'Content-Type': 'application/json',
         },
