@@ -55,9 +55,15 @@ dotenv.config({ path: path.join(__dirname, "./.env") });
 const connectDB = require("./confiq/db");
 
 //===== MIDDLEWARE ====//
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+
+const corsOptions = {
+  origin: ['https://hr-management-1-frontend.onrender.com'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 //===== DATABASE CONNECTION ====//
 const MONGODB_CONNECTION_URL = process.env.MONGODB_CONNECTION_URL;
