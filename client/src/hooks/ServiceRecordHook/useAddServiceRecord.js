@@ -9,7 +9,7 @@ const useAddServiceRecord = () => {
   const addServiceRecord = async (userId, srData) => {
     setLoading(true);
     try {
-      const response = await axios.post(`http://localhost:3000/api/employee/service-record/${userId}/add`, srData, {
+      const response = await axios.post(`https://hr-management-1-baxp.onrender.com/api/employee/service-record/${userId}/add`, srData, {
         headers: {
           'Content-Type': 'application/json',
         },
