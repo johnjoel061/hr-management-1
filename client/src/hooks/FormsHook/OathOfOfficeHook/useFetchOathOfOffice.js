@@ -9,7 +9,7 @@ const useFetchOathOfOffice = () => {
   const fetchOathOfOffice = useCallback(async () => {
     setLoading(true); // Ensure loading state is true when refetching
     try {
-      const response = await axios.get('http://localhost:3000/api/oath-of-office/all', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/oath-of-office/all', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
