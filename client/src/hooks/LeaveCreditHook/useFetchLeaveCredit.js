@@ -15,7 +15,7 @@ const useFetchLeaveCredit = (userId) => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/employee/leave-credit/${userId}/all`);
+      const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/employee/leave-credit/${userId}/all`);
 
       if (response.status === 200) {
         setLeaveCredit(response.data.data);
