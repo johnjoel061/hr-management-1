@@ -10,7 +10,7 @@ const useUpdatePerformanceRating = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/performance-rating/${userId}/${prId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/performance-rating/${userId}/${prId}`,
         updatedData,
         {
           headers: {
