@@ -11,7 +11,7 @@ const useDeletePrivacyPolicy = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/privacy-policy/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/privacy-policy/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
