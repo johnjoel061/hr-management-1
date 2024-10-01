@@ -28,7 +28,7 @@ const useUpdateNosiById = () => {
         }
       });
 
-      const response = await axios.put(`http://localhost:3000/api/nosi/${id}`, formData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/nosi/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
