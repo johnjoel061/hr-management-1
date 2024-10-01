@@ -10,7 +10,7 @@ const useAddLeaveType = () => {
     setLoading(true);
     try {
       // Make API request to add leaveType
-      const response = await axios.post('http://localhost:3000/api/leave-type/add', leaveTypeData, {
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/leave-type/add', leaveTypeData, {
         headers: {
           'Content-Type': 'application/json',
         },
