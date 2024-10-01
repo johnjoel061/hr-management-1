@@ -10,7 +10,7 @@ const useAddCalendar = () => {
     setLoading(true);
     try {
       // Make API request to add 
-      const response = await axios.post('http://localhost:3000/api/calendar/add', calendarData, {
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/calendar/add', calendarData, {
         headers: {
           'Content-Type': 'application/json',
         },
