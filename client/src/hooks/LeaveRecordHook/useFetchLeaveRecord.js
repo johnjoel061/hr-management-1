@@ -15,7 +15,7 @@ const useFetchLeaveRecord = (userId) => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/employee/leave-record/${userId}/all`);
+      const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/employee/leave-record/${userId}/all`);
 
       if (response.status === 200) {
         setLeaveRecord(response.data.data);
