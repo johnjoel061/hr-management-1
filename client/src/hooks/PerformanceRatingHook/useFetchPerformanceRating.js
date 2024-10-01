@@ -15,7 +15,7 @@ const useFetchPerformanceRating = (userId) => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/employee/performance-rating/${userId}/all`);
+      const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/employee/performance-rating/${userId}/all`);
 
       if (response.status === 200) {
         setPerformanceRating(response.data.data);
