@@ -8,7 +8,7 @@ const useUpdateDepartment = () => {
   const updateDepartmentById = async (id, updatedData) => {
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:3000/api/department/${id}`, updatedData, {
+      const response = await axios.put(`https://hr-management-1-baxp.onrender.com/api/department/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
