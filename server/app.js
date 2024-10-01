@@ -142,7 +142,13 @@ if (!fs.existsSync(uploadLguLogo)) {
 
 app.use('/uploads/profilePictures', express.static(uploadDir));
 app.use('/uploads/signatures', express.static(uploadSig));
-app.use('/uploads/settings', express.static(uploadLguLogo));
+app.use('/uploads/settings', (req, res, next) => {
+  // Enforce HTTPS for file requests
+  if (!req.secure) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+}, express.static(uploadLguLogo));
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -175,20 +181,19 @@ if (process.env.NODE_ENV === "development") {
   // });
 }
 
+// Force HTTPS in production
 if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    if (!req.secure) {
+      return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
   app.use(express.static(path.join(__dirname, 'public')));
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
-
-app.use((req, res, next) => {
-  if (!req.secure) {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
-});
-
 
 // Handle 404 errors
 app.all('*', (req, res) => {
