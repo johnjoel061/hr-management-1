@@ -10,7 +10,7 @@ const useAddLeaveRequest = () => {
     setLoading(true);
     try {
       // Make API request to add leave request
-      const response = await axios.post('http://localhost:3000/api/employee/leave-requests/add', leaveRequestData, {
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/employee/leave-requests/add', leaveRequestData, {
         headers: {
           'Content-Type': 'application/json',
         },
