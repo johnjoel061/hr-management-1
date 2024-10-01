@@ -11,7 +11,7 @@ const useDeleteRequestForm = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/request-form/certification/delete/${certificationId}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/request-form/certification/delete/${certificationId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
