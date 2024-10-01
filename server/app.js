@@ -84,7 +84,7 @@ app.use("/api/personal-data-sheet", personalDataSheetRouter);
 app.use("/api/appointment", appointmentRouter); 
 app.use("/api/assumption-of-duty", assumptionOfDutyRouter);
 app.use("/api/oath-of-office", oathOfOfficeRouter); 
-app.use("/api/position-description-form", PositionDescriptionFormRouter); designationRouter
+app.use("/api/position-description-form", PositionDescriptionFormRouter); 
 app.use("/api/certificate-of-eligibility", certificateOfEligibilityRouter); 
 app.use("/api/designation", designationRouter);
 app.use("/api/saln", salnRouter);
