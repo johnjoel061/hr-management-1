@@ -163,7 +163,7 @@ if (process.env.NODE_ENV === "development") {
       next(); // Let API requests go through
     } else {
       // For all other requests, send to Vite
-      const viteDevServerURL = 'https://hr-management-1-baxp.onrender.com'; // Default Vite port
+      const viteDevServerURL = 'https://hr-management-1-frontend.onrender.com'; // Default Vite port
       res.redirect(viteDevServerURL + req.originalUrl);
     }
   });
