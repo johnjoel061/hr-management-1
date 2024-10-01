@@ -9,7 +9,7 @@ const useFetchCos = () => {
   const fetchCos = useCallback(async () => {
     setLoading(true); // Ensure loading state is true when refetching
     try {
-      const response = await axios.get('http://localhost:3000/api/contract-of-service/all', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/contract-of-service/all', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
