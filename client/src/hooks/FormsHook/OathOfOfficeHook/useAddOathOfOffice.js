@@ -21,7 +21,7 @@ const useAddOathOfOffice = () => {
       });
 
       // Make API request to add personal data sheet
-      const response = await axios.post('http://localhost:3000/api/oath-of-office/add', formData, {
+      const response = await axios.post('https://hr-management-1-baxp.onrender.com/api/oath-of-office/add', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
