@@ -9,7 +9,7 @@ const useFetchAllRequestForm = () => {
   const fetchAllRequestForm = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/api/request-form/certification/getAll', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/request-form/certification/getAll', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
