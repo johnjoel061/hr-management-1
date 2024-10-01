@@ -11,7 +11,7 @@ const useDeleteCertificateOfEligibilityById = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/certificate-of-eligibility/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/certificate-of-eligibility/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
