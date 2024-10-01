@@ -10,7 +10,7 @@ const useUpdateLeaveCredit = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/leave-credit/${userId}/${lcId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/leave-credit/${userId}/${lcId}`,
         updatedData,
         {
           headers: {
