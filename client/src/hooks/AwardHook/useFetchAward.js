@@ -15,7 +15,7 @@ const useFetchAward = (userId) => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/employee/awards/${userId}/all`);
+      const response = await axios.get(`https://hr-management-1-baxp.onrender.com/api/employee/awards/${userId}/all`);
 
       if (response.status === 200) {
         setAward(response.data.data);
