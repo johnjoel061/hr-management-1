@@ -9,7 +9,7 @@ const useFetchClearanceMoneyPropertyAcct = () => {
   const fetchClearanceMoneyPropertyAcct = useCallback(async () => {
     setLoading(true); // Ensure loading state is true when refetching
     try {
-      const response = await axios.get('http://localhost:3000/api/clearance-from-money-and-property-accountabilities/all', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/clearance-from-money-and-property-accountabilities/all', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
