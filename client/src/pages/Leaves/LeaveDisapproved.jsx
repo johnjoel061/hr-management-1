@@ -60,7 +60,7 @@ const LeaveDisapproved = () => {
   );
 
   const downloadLeaveRequestPDF = (id) => {
-    window.open(`http://localhost:3000/api/employee/leave-requests/${id}/pdf`, '_blank');
+    window.open(`https://hr-management-1-baxp.onrender.com/api/employee/leave-requests/${id}/pdf`, '_blank');
   };
 
   const columns = [
