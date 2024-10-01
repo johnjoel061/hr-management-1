@@ -10,7 +10,7 @@ const useUpdateLearningDevelopment = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/learning-development/${userId}/${ldId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/learning-development/${userId}/${ldId}`,
         updatedData,
         {
           headers: {
