@@ -190,7 +190,7 @@ const NbiClearance = () => {
     { field: "nbiSuffix", headerName: "Suffix", width: 120 },
     {
       field: "nbiScannedPicture",
-      headerName: "Appointment Scanned Images",
+      headerName: "NBI Scanned Images",
       width: 350,
       renderCell: (params) => (
         <Box>
