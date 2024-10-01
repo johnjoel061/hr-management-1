@@ -34,7 +34,7 @@ const useApprovedLeaveRequest = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/leave-requests/status/${requestId}`,
+        `https://hr-management-1-baxp.onrender.com/api/employee/leave-requests/status/${requestId}`,
         {
           status,
           role,
