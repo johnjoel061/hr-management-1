@@ -9,7 +9,7 @@ const useDeleteLeaveCredit = () => {
   const deleteLeaveCredit = async (userId, lcId) => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/employee/leave-credit/${userId}/${lcId}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/employee/leave-credit/${userId}/${lcId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
