@@ -9,7 +9,7 @@ const useFetchUsers = () => {
   const fetchUsers = useCallback(async () => {
     setLoading(true); // Ensure loading state is true when refetching
     try {
-      const response = await axios.get('http://localhost:3000/api/employee/users', {
+      const response = await axios.get('https://hr-management-1-baxp.onrender.com/api/employee/users', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
