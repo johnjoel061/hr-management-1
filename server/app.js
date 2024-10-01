@@ -55,15 +55,9 @@ dotenv.config({ path: path.join(__dirname, "./.env") });
 const connectDB = require("./confiq/db");
 
 //===== MIDDLEWARE ====//
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
-
-const corsOptions = {
-  origin: ['https://hr-management-1-frontend.onrender.com'],
-  credentials: true,
-};
-app.use(cors(corsOptions));
 
 //===== DATABASE CONNECTION ====//
 const MONGODB_CONNECTION_URL = process.env.MONGODB_CONNECTION_URL;
@@ -142,13 +136,7 @@ if (!fs.existsSync(uploadLguLogo)) {
 
 app.use('/uploads/profilePictures', express.static(uploadDir));
 app.use('/uploads/signatures', express.static(uploadSig));
-app.use('/uploads/settings', (req, res, next) => {
-  // Enforce HTTPS for file requests
-  if (!req.secure) {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
-}, express.static(uploadLguLogo));
+app.use('/uploads/settings', express.static(uploadLguLogo));
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -170,28 +158,14 @@ app.use("/", express.static(path.join(__dirname, "public")));
 // Serve Vite app files in development
 if (process.env.NODE_ENV === "development") {
   // Use the Vite dev server URL to proxy API requests
-  // app.use((req, res, next) => {
-  //   if (req.originalUrl.startsWith('/api')) {
-  //     next(); // Let API requests go through
-  //   } else {
-  //     // For all other requests, send to Vite
-  //     const viteDevServerURL = 'https://hr-management-1-baxp.onrender.com'; // Default Vite port
-  //     res.redirect(viteDevServerURL + req.originalUrl);
-  //   }
-  // });
-}
-
-// Force HTTPS in production
-if (process.env.NODE_ENV === "production") {
   app.use((req, res, next) => {
-    if (!req.secure) {
-      return res.redirect(`https://${req.headers.host}${req.url}`);
+    if (req.originalUrl.startsWith('/api')) {
+      next(); // Let API requests go through
+    } else {
+      // For all other requests, send to Vite
+      const viteDevServerURL = 'http://localhost:5173'; // Default Vite port
+      res.redirect(viteDevServerURL + req.originalUrl);
     }
-    next();
-  });
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
 
