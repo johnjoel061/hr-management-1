@@ -11,7 +11,7 @@ const useDeletePositionDescriptionFormById = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.delete(`http://localhost:3000/api/position-description-form/${id}`, {
+      const response = await axios.delete(`https://hr-management-1-baxp.onrender.com/api/position-description-form/${id}`, {
         headers: {
           'Content-Type': 'application/json',
         }
