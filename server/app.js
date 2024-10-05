@@ -160,8 +160,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Serve static files from the 'public' directory
-app.use("/", express.static(path.join(__dirname, "public")));
 
 // Serve Vite app files in development
 if (process.env.NODE_ENV === "development") {
@@ -180,7 +178,7 @@ if (process.env.NODE_ENV === "development") {
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, 'public')));
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'build/index.html'));
   });
 }
 
