@@ -112,7 +112,7 @@ const App = () => {
                 <Route path="/admin-dashboard" element={isAuthenticated && userData.role === 'ADMIN' ? <DashboardAdmin /> : <Navigate to="/" />} />
                 
                 {/*EMPLOYEE*/}
-                <Route path="/add-employee" element={isAuthenticated && userData.role === 'ADMIN' ? <AddEmployee /> : (window.location.href = "https://hr-management-1-frontend.onrender.com/admin-dashboard")} />
+                <Route path="/add-employee" element={isAuthenticated && userData.role === 'ADMIN' ? <AddEmployee /> : <Navigate to="/" />} />
                 <Route path="/employee-list" element={isAuthenticated && userData.role === 'ADMIN' ? <EmployeeList /> : <Navigate to="/" />} />
                 <Route path="/employee-list/employee-details/:id" element={isAuthenticated && userData.role === 'ADMIN' ? <EmployeeDetails /> : <Navigate to="/" />} />
 
