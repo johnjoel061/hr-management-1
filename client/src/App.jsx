@@ -78,12 +78,6 @@ const App = () => {
   const [theme, colorMode] = useMode();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Redirect to the login page if not authenticated
-  if (!isAuthenticated) {
-    window.location.href = 'https://hr-management-1-baxp.onrender.com/';
-    return null; // Prevent further rendering
-  }
-
   // Function to determine where to redirect based on user role
   const getRedirectPath = () => {
     if (userData.role === 'ADMIN') return '/admin-dashboard';
