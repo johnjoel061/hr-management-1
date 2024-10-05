@@ -205,7 +205,7 @@ const AdminSidebar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "8%"}>
             <Item
               title="Dashboard"
-              to="https://hr-management-1-baxp.onrender.com/"
+              to="https://hr-management-1-frontend.onrender.com/"
               icon={<HomeOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -221,7 +221,7 @@ const AdminSidebar = () => {
             </Typography>
             <Item
               title="Add Employee"
-              to="https://hr-management-1-baxp.onrender.com/add-employee"
+              to="https://hr-management-1-frontend.onrender.com/add-employee"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
