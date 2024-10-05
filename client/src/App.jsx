@@ -109,7 +109,7 @@ const App = () => {
               {isAuthenticated && <Topbar setIsSidebar={setIsSidebarCollapsed} className="topbar"/>}
               <Routes>
                 <Route path="/" element={!isAuthenticated ? <Login /> : <Navigate to={getRedirectPath()} />} />
-                <Route path="/admin-dashboard" element={isAuthenticated && userData.role === 'ADMIN' ? <DashboardAdmin /> : <Navigate to="/" />} />
+                <Route path="/admin-dashboard" element={isAuthenticated && userData.role === 'ADMIN' ? <DashboardAdmin /> : <Navigate to="/admin-dashboard" />} />
                 
                 {/*EMPLOYEE*/}
                 <Route path="/add-employee" element={isAuthenticated && userData.role === 'ADMIN' ? <AddEmployee /> : <Navigate to="/" />} />
