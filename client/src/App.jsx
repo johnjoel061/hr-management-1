@@ -80,7 +80,7 @@ const App = () => {
 
   // Function to determine where to redirect based on user role
   const getRedirectPath = () => {
-    if (userData.role === 'ADMIN') return '/admin-dashboard';
+    if (userData.role === 'ADMIN') return 'https://hr-management-1-baxp.onrender.com/admin-dashboard';
     if (userData.role === 'EMPLOYEE') return '/employee-dashboard';
     if (userData.role === 'HOD') return '/hod-dashboard';
     if (userData.role === 'M-ADMIN') return '/m-admin-dashboard';
@@ -108,7 +108,7 @@ const App = () => {
             <main style={{ flexGrow: 1, overflowX: 'hidden' }}>
               {isAuthenticated && <Topbar setIsSidebar={setIsSidebarCollapsed} className="topbar"/>}
               <Routes>
-                <Route path="/https://hr-management-1-baxp.onrender.com" element={!isAuthenticated ? <Login /> : <Navigate to={getRedirectPath()} />} />
+                <Route path="/" element={!isAuthenticated ? <Login /> : <Navigate to={getRedirectPath()} />} />
                 <Route path="/admin-dashboard" element={isAuthenticated && userData.role === 'ADMIN' ? <DashboardAdmin /> : <Navigate to="/" />} />
                 
                 {/*EMPLOYEE*/}
