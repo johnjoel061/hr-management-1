@@ -108,7 +108,7 @@ const App = () => {
             <main style={{ flexGrow: 1, overflowX: 'hidden' }}>
               {isAuthenticated && <Topbar setIsSidebar={setIsSidebarCollapsed} className="topbar"/>}
               <Routes>
-                <Route path="/" element={!isAuthenticated ? <Login /> : <Navigate to={getRedirectPath()} />} />
+                <Route path="/https://hr-management-1-baxp.onrender.com" element={!isAuthenticated ? <Login /> : <Navigate to={getRedirectPath()} />} />
                 <Route path="/admin-dashboard" element={isAuthenticated && userData.role === 'ADMIN' ? <DashboardAdmin /> : <Navigate to="/" />} />
                 
                 {/*EMPLOYEE*/}
