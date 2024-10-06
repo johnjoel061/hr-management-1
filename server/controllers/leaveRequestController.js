@@ -588,7 +588,7 @@ exports.approveLeaveRequest = async (req, res, next) => {
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 617);
   doc.rect(227, 580, 83, 60).stroke();
 
-  const adminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  const adminSignaturePath = path.join(__dirname, '../assets/hr_signature.png');
   // Check if the admin has approved the leave request
   if (leaveRequest.adminApproval === 'approved' || leaveRequest.adminApproval === 'disapproved') { 
     if (fs.existsSync(adminSignaturePath)) {
@@ -669,7 +669,7 @@ exports.approveLeaveRequest = async (req, res, next) => {
   doc.font('Helvetica').fontSize(7.7).text('________others (Specify)', 70, 727);
 
   //--------------------------M-ADMIN-------------------------------------
-  const mAdminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  const mAdminSignaturePath = path.join(__dirname, '../assets/hr_signature.png');
   // Check if the admin has approved the leave request
   if (leaveRequest.mAdminApproval === 'approved' || leaveRequest.mAdminApproval === 'disapproved') { 
     if (fs.existsSync(mAdminSignaturePath)) {
@@ -1003,7 +1003,7 @@ exports.generateLeaveRequestPDF = async (req, res) => {
   doc.font('Helvetica-Bold').fontSize(9).text(`__________________________________________________`, 60, 617);
   doc.rect(227, 580, 83, 60).stroke();
   
-  const adminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  const adminSignaturePath = path.join(__dirname, '../assets/hr_signature.png');
   // Check if the admin has approved the leave request
   if (leaveRequest.adminApproval === 'approved' || leaveRequest.adminApproval === 'disapproved') { 
     if (fs.existsSync(adminSignaturePath)) {
@@ -1084,7 +1084,7 @@ exports.generateLeaveRequestPDF = async (req, res) => {
   doc.font('Helvetica').fontSize(7.7).text('________others (Specify)', 70, 727);
 
   //--------------------------M-ADMIN-------------------------------------
-  const mAdminSignaturePath = path.join(__dirname, '../assets/456904926_440253632370770_1201780014391295451_n.jpg');
+  const mAdminSignaturePath = path.join(__dirname, '../assets/hr_signature.png');
   // Check if the admin has approved the leave request
   if (leaveRequest.mAdminApproval === 'approved' || leaveRequest.mAdminApproval === 'disapproved') { 
     if (fs.existsSync(mAdminSignaturePath)) {
