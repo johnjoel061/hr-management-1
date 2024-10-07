@@ -75,7 +75,7 @@ const DashboardAdmin = () => {
     (request) => request.status === "approved"
   );
   const rejectedLeaveRequests = leaveRequests.filter(
-    (request) => request.status === "rejected"
+    (request) => request.status === "disapproved"
   );
 
   return (
@@ -293,7 +293,7 @@ const DashboardAdmin = () => {
             variant="h6"
             sx={{ fontFamily: "Montserrat", letterSpacing: 1 }}
           >
-            LEAVES REJECTED
+            LEAVES DISAPPROVED
           </Typography>
         </Box>
 
