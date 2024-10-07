@@ -36,6 +36,7 @@ import useFetchCommendationAndAward from "../../../hooks/FormsHook/CommendationA
 import useFetchCopiesOfDiscipAction from "../../../hooks/FormsHook/CopiesOfDiscipActionHook/useFetchCopiesOfDiscipAction";
 import useFetchCos from "../../../hooks/FormsHook/CosHook/useFetchCos";
 import useFetchAllLeaveRequest from "../../../hooks/LeaveRequestHook/useFetchAllLeaveRequest";
+import useFetchAllRequestForm from "../../../hooks/RequestFormHook/useFetchAllRequestForm";
 
 const DashboardAdmin = () => {
   const theme = useTheme();
@@ -67,6 +68,7 @@ const DashboardAdmin = () => {
   const { copiesOfDiscipAction } = useFetchCopiesOfDiscipAction();
   const { cos } = useFetchCos();
   const { leaveRequests } = useFetchAllLeaveRequest();
+  const { requestForm } = useFetchAllRequestForm();
 
   const pendingLeaveRequests = leaveRequests.filter(
     (request) => request.status === "pending"
@@ -76,6 +78,17 @@ const DashboardAdmin = () => {
   );
   const rejectedLeaveRequests = leaveRequests.filter(
     (request) => request.status === "disapproved"
+  );
+
+  //request form
+  const pendingRequestForm = requestForm.filter(
+    (request) => request.status === "pending"
+  );
+  const approvedRequestForm = requestForm.filter(
+    (request) => request.status === "approved"
+  );
+  const rejectedRequestForm = requestForm.filter(
+    (request) => request.status === "rejected"
   );
 
   return (
@@ -297,6 +310,93 @@ const DashboardAdmin = () => {
           </Typography>
         </Box>
 
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ padding: 2, fontFamily: "Montserrat" }}
+        >
+          <PendingActionsOutlinedIcon fontSize="large" />
+          <Typography
+            color={colors.greenAccent[400]}
+            variant="h5"
+            sx={{
+              fontFamily: "Montserrat",
+              fontWeight: "bold",
+              letterSpacing: 2,
+            }}
+          >
+            {pendingRequestForm.length}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "Montserrat", letterSpacing: 1 }}
+          >
+            PENDING REQUEST FORM
+          </Typography>
+        </Box>
+
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ padding: 2, fontFamily: "Montserrat" }}
+        >
+          <AssignmentTurnedInOutlinedIcon fontSize="large" />
+          <Typography
+            color={colors.greenAccent[400]}
+            variant="h5"
+            sx={{
+              fontFamily: "Montserrat",
+              fontWeight: "bold",
+              letterSpacing: 2,
+            }}
+          >
+            {approvedRequestForm.length}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "Montserrat", letterSpacing: 1 }}
+          >
+            APPROVED REQUEST FORM
+          </Typography>
+        </Box>
+
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ padding: 2, fontFamily: "Montserrat" }}
+        >
+          <DangerousOutlinedIcon fontSize="large" />
+          <Typography
+            color={colors.greenAccent[400]}
+            variant="h5"
+            sx={{
+              fontFamily: "Montserrat",
+              fontWeight: "bold",
+              letterSpacing: 2,
+            }}
+          >
+            {rejectedRequestForm.length}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "Montserrat", letterSpacing: 1 }}
+          >
+            REJECTED REQUEST FORM
+          </Typography>
+        </Box>
+        
         {/* ROW 2 */}
         <Box gridColumn="span 8" gridRow="span 2">
           <Box m="5px">
