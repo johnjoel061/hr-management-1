@@ -59,16 +59,16 @@ exports.addLeaveRequest = async (req, res, next) => {
     } = req.body;
 
     // Check if the user already has a pending leave request
-    const existingLeaveRequest = await LeaveRequest.findOne({
-      gmail: gmail,
-      status: "pending",
-    });
+    // const existingLeaveRequest = await LeaveRequest.findOne({
+    //   gmail: gmail,
+    //   status: "pending",
+    // });
 
-    if (existingLeaveRequest) {
-      return res.status(400).json({
-        message: "You already have a pending leave request.",
-      });
-    }
+    // if (existingLeaveRequest) {
+    //   return res.status(400).json({
+    //     message: "You already have a pending leave request.",
+    //   });
+    // }
 
     // Create a new leave request
     const newLeaveRequest = new LeaveRequest({
