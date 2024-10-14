@@ -591,10 +591,10 @@ const EmployeeDashboard = () => {
   //========================CREDITS RATING COLUMNS END========================//
 
   //========================CREDITS START========================//
-  const leaveCreditColumns = [
-    { field: "leaveType", headerName: "LEAVE TYPE", width: 600 },
-    { field: "credit", headerName: "CREDITS", width: 600 },
-  ];
+  // const leaveCreditColumns = [
+  //   { field: "leaveType", headerName: "LEAVE TYPE", width: 600 },
+  //   { field: "credit", headerName: "CREDITS", width: 600 },
+  // ];
   //========================CREDITS RATING COLUMNS END========================//
 
   console.log("aWARD", userData.award);
@@ -1222,7 +1222,7 @@ const EmployeeDashboard = () => {
           </Grid>
         </Card>
 
-        <Card variant="outlined" style={{ marginTop: "30px" }}>
+{/*         <Card variant="outlined" style={{ marginTop: "30px" }}>
           <Grid container>
             <Grid item xs={12} md={12}>
               <Typography variant="h4" sx={{ marginBottom: 2 }}>
@@ -1231,7 +1231,7 @@ const EmployeeDashboard = () => {
                 </Title>
                 <Box
                   m="10px 0 0 0"
-                  height="calc(80vh - 200px)" // Adjust this value as needed for responsiveness
+                  height="calc(80vh - 200px)" 
                   width="100%"
                   sx={{
                     "& .MuiDataGrid-root": {
@@ -1272,7 +1272,7 @@ const EmployeeDashboard = () => {
               </Typography>
             </Grid>
           </Grid>
-        </Card>
+        </Card> */}
 
         {/*========== Leave Application Modal=========== */}
         <Modal
