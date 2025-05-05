@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e8485011-d294-4924-b919-b579779e6a93)#My THESIS - HRIS Web Application
+# My THESIS - HRIS Web Application
 
 A dynamic Human Resource Information System (HRIS) built using the MERN stack tailored to meet the specific needs of a local government stakeholder. The system features full CRUD functionality for managing employee records, including personal and employment details. It integrates RESTful APIs for seamless operations.
 
